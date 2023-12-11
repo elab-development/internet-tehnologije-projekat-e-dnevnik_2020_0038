@@ -17,10 +17,13 @@ return new class extends Migration
     {
         Schema::table('korisniks', function (Blueprint $table) {
             Schema::table('korisniks', function (Blueprint $table){
-                $table->foreignId('tip_korisnika_id');
+                $table->foreignId('tip_korisnika_id')->after('roditelj_id');
             });
         });
     }
+
+
+    
 
     /**
      * Reverse the migrations.
