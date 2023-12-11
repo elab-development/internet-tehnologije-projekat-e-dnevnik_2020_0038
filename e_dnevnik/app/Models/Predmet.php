@@ -12,4 +12,9 @@ class Predmet extends Model
     protected $primaryKey = ['id','razred_id'];
 
     public $incrementing = false;
+
+    protected $fillable = [
+        'NazivPredmeta',
+    ];
+
 }
