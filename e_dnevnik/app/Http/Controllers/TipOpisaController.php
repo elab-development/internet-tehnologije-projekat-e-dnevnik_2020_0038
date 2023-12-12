@@ -2,25 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\DnevnikCollection;
-use App\Http\Resources\DnevnikResource;
-use App\Http\Resources\KorisnikCollection;
-use App\Http\Resources\KorisnikResource;
-use App\Models\Korisnik;
+use App\Http\Resources\TipOpisaCollection;
+use App\Models\TipOpisa;
 use Illuminate\Http\Request;
 
-class KorisnikController extends Controller
+class TipOpisaController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($korisnik_id)
+    public function index()
     {
-        $korisnik = Korisnik::find($korisnik_id);
-        $dnevnik = $korisnik->dnevnik()->get();
-        return new DnevnikCollection($dnevnik);
+        $tipoviOpisa = TipOpisa::all();
+        return new TipOpisaCollection($tipoviOpisa);
     }
 
     /**
@@ -47,25 +43,21 @@ class KorisnikController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Korisnik  $korisnik
+     * @param  \App\Models\TipOpisa  $tipOpisa
      * @return \Illuminate\Http\Response
      */
-    public function show($korisnik_id)
+    public function show(TipOpisa $tipOpisa)
     {
-        $korisnik = Korisnik::find($korisnik_id);
-        if(is_null($korisnik)){
-            return response()->json('User is not found', 404);
-        }
-        return new KorisnikResource($korisnik);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Korisnik  $korisnik
+     * @param  \App\Models\TipOpisa  $tipOpisa
      * @return \Illuminate\Http\Response
      */
-    public function edit(Korisnik $korisnik)
+    public function edit(TipOpisa $tipOpisa)
     {
         //
     }
@@ -74,10 +66,10 @@ class KorisnikController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Korisnik  $korisnik
+     * @param  \App\Models\TipOpisa  $tipOpisa
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Korisnik $korisnik)
+    public function update(Request $request, TipOpisa $tipOpisa)
     {
         //
     }
@@ -85,10 +77,10 @@ class KorisnikController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Korisnik  $korisnik
+     * @param  \App\Models\TipOpisa  $tipOpisa
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Korisnik $korisnik)
+    public function destroy(TipOpisa $tipOpisa)
     {
         //
     }

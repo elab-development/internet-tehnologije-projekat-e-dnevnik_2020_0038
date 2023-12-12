@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\DnevnikCollection;
-use App\Http\Resources\DnevnikResource;
-use App\Http\Resources\KorisnikCollection;
-use App\Http\Resources\KorisnikResource;
+use App\Models\Dnevnik;
 use App\Models\Korisnik;
 use Illuminate\Http\Request;
 
-class KorisnikController extends Controller
+class DnevnikController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -47,25 +45,21 @@ class KorisnikController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Korisnik  $korisnik
+     * @param  \App\Models\Dnevnik  $dnevnik
      * @return \Illuminate\Http\Response
      */
-    public function show($korisnik_id)
+    public function show(Dnevnik $dnevnik)
     {
-        $korisnik = Korisnik::find($korisnik_id);
-        if(is_null($korisnik)){
-            return response()->json('User is not found', 404);
-        }
-        return new KorisnikResource($korisnik);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Korisnik  $korisnik
+     * @param  \App\Models\Dnevnik  $dnevnik
      * @return \Illuminate\Http\Response
      */
-    public function edit(Korisnik $korisnik)
+    public function edit(Dnevnik $dnevnik)
     {
         //
     }
@@ -74,10 +68,10 @@ class KorisnikController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Korisnik  $korisnik
+     * @param  \App\Models\Dnevnik  $dnevnik
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Korisnik $korisnik)
+    public function update(Request $request, Dnevnik $dnevnik)
     {
         //
     }
@@ -85,10 +79,10 @@ class KorisnikController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Korisnik  $korisnik
+     * @param  \App\Models\Dnevnik  $dnevnik
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Korisnik $korisnik)
+    public function destroy(Dnevnik $dnevnik)
     {
         //
     }

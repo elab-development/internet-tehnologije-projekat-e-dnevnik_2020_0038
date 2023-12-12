@@ -14,12 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('predmets', function (Blueprint $table) {
-            $table->unsignedBigInteger('predmet_id');
+            $table->id('predmet_id');
             $table->string('NazivPredmeta');
-            $table->unsignedBigInteger('razred_id');
+            $table->foreignId('razred_id')->constrained();
             $table->timestamps();
-            $table->foreign('razred_id')->references('id')->on('razreds');
-            $table->primary(['predmet_id', 'razred_id']);   
+            
         });
     }
 

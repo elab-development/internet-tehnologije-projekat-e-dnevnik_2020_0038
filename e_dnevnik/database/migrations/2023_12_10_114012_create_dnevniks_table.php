@@ -16,19 +16,16 @@ return new class extends Migration
         Schema::create('dnevniks', function (Blueprint $table) {
             $table->date('Datum');
             $table->string('Opis');
-            $table->unsignedBigInteger('razred_id');
             $table->unsignedBigInteger('predmet_id');
-            
             $table->foreignId('tip_opisa_id')->constrained();
             $table->unsignedBigInteger('ucenik_id');
             $table->unsignedBigInteger('profesor_id');
             $table->timestamps();
 
-            $table->foreign('razred_id')->references('razred_id')->on('predmets');
             $table->foreign('predmet_id')->references('predmet_id')->on('predmets');
             $table->foreign('ucenik_id')->references('id')->on('korisniks');
             $table->foreign('profesor_id')->references('id')->on('korisniks');
-            $table->primary(['Datum', 'predmet_id','ucenik_id', 'razred_id']);
+            $table->primary(['Datum', 'predmet_id','ucenik_id']);
         });
     }
 

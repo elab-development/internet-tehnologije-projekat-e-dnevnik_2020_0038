@@ -16,10 +16,10 @@ class DnevnikResource extends JsonResource
     {
         return [
             'Datum' => $this->resource->Datum,
-            'predmet_id' => new PredmetResource($this->resource->predmet_id),
-            'NazivPredmeta' => $this->resource->NazivPredmeta,
-            'tip_opisa_id' => new TipOpisaResource($this->resource->tip_opisa_id),
-            'profesor_id'=> new KorisnikResource($this->resource->profesor_id),
+            'Predmet' => $this->resource->predmet,
+            'Ucenik' => $this->resource->ucenik,
+            'Tip_opisa' => $this->resource->tipOpisa,
+            'Profesor'=> $this->resource->profesor,
             'Opis' => $this->resource->Opis
         ];
     }

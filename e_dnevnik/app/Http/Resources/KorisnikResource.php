@@ -16,11 +16,11 @@ class KorisnikResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
-            'ImePrezime' => $this->resource->ImePrezime,
+            'Ime' => $this->resource->ImePrezime,
             'Email' => $this->resource->Email,
             'Sifra' => $this->resource->Sifra,
-            'IDRoditelja' => new KorisnikResource($this->resource->IDRoditelja),
-            'IDTipaKorisnika' => new TipKorisnikaResource($this->resource->IDTipaKorisnika)
+            'Roditelj' => $this->resource->roditelj,
+            'TipKorisnika' => $this->resource->tipKorisnika
         ];
     }
 }

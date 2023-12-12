@@ -16,7 +16,7 @@ class TipKorisnikaResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
-            'NazivKorisnika' => $this->resource->ImePrezime
+            'NazivTipaKorisnika' => $this->resource->NazivTipaKorisnika
         ];
     }
 }

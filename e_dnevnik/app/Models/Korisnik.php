@@ -20,4 +20,19 @@ class Korisnik extends Model
         'Sifra',
         
     ];
+
+    public function tipKorisnika()
+    {
+        return $this->belongsTo(TipKorisnika::class);
+    }
+
+    public function roditelj() 
+    {
+        return $this->belongsTo(Korisnik::class);
+    }
+
+    function dnevnik() 
+    {
+        return $this->hasMany(Dnevnik::class);    
+    }
 }

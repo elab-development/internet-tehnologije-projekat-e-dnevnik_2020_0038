@@ -16,7 +16,7 @@ class RazredResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
-            'Naziv' => $this->resource->NazivOpisa,
+            'Naziv' => $this->resource->Naziv,
         ];
     }
 }

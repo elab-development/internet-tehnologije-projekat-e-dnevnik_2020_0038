@@ -12,4 +12,9 @@ class Razred extends Model
     protected $fillable = [
         'Naziv'
     ];
+
+    public function predmeti()
+    {
+        return $this->hasMany(Predmet::class);
+    }
 }

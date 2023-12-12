@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class TipOpisa extends Model
 {
     use HasFactory;
+
+    function opisOcene() 
+    {
+        return $this->hasMany(Dnevnik::class);    
+    }
 }

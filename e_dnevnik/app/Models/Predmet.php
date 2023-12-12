@@ -9,12 +9,17 @@ class Predmet extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = ['id','razred_id'];
-
-    public $incrementing = false;
-
     protected $fillable = [
         'NazivPredmeta',
     ];
 
+    public function razred() 
+    {
+        return $this->belongsTo(Razred::class);
+    }
+
+    function unesen() 
+    {
+        return $this->hasMany(Dnevnik::class);    
+    }
 }

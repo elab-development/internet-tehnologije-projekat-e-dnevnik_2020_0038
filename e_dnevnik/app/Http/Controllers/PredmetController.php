@@ -2,25 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\DnevnikCollection;
-use App\Http\Resources\DnevnikResource;
-use App\Http\Resources\KorisnikCollection;
-use App\Http\Resources\KorisnikResource;
-use App\Models\Korisnik;
+use App\Http\Resources\PredmetCollection;
+use App\Models\Predmet;
 use Illuminate\Http\Request;
 
-class KorisnikController extends Controller
+class PredmetController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($korisnik_id)
+    public function index($razred_id)
     {
-        $korisnik = Korisnik::find($korisnik_id);
-        $dnevnik = $korisnik->dnevnik()->get();
-        return new DnevnikCollection($dnevnik);
+        $predmeti_razreda = Predmet::find($razred_id)->razred;
+        return new PredmetCollection($predmeti_razreda);
     }
 
     /**
@@ -41,31 +37,32 @@ class KorisnikController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $predmet = new Predmet;
+
+        $predmet->razred_id = $request->razred_id;
+        $predmet->NazivPredmeta = $request->NazivPredmeta;
+
+        $predmet->save();
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Korisnik  $korisnik
+     * @param  \App\Models\Predmet  $predmet
      * @return \Illuminate\Http\Response
      */
-    public function show($korisnik_id)
+    public function show(Predmet $predmet)
     {
-        $korisnik = Korisnik::find($korisnik_id);
-        if(is_null($korisnik)){
-            return response()->json('User is not found', 404);
-        }
-        return new KorisnikResource($korisnik);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Korisnik  $korisnik
+     * @param  \App\Models\Predmet  $predmet
      * @return \Illuminate\Http\Response
      */
-    public function edit(Korisnik $korisnik)
+    public function edit(Predmet $predmet)
     {
         //
     }
@@ -74,10 +71,10 @@ class KorisnikController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Korisnik  $korisnik
+     * @param  \App\Models\Predmet  $predmet
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Korisnik $korisnik)
+    public function update(Request $request, Predmet $predmet)
     {
         //
     }
@@ -85,11 +82,12 @@ class KorisnikController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Korisnik  $korisnik
+     * @param  \App\Models\Predmet  $predmet
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Korisnik $korisnik)
+    public function destroy($predmet_id)
     {
-        //
+        $res = Predmet::where('predmet_id',$predmet_id)->delete();
+        return $res;
     }
 }
