@@ -13,12 +13,15 @@ class Korisnik extends Model
         'ImePrezime',
         'Email',
         'Sifra',
+        'roditelj_id',
+        'tip_korisnika_id'
     ];
 
 
     protected $hidden = [
         'Sifra',
-        
+        'roditelj_id',
+        'tip_korisnika_id'
     ];
 
     public function tipKorisnika()

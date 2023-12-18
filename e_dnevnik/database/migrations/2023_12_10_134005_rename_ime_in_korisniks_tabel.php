@@ -11,26 +11,23 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
-    {
-        Schema::table('korisniks', function (Blueprint $table) {
-            //Schema::table('korisniks', function (Blueprint $table){
-                $table->renameColumn('Ime', 'ImePrezime');
-            //});
-        });
-    }
+   public function up()
+{
+    Schema::table('korisniks', function (Blueprint $table) {
+        $table->renameColumn('Ime', 'ImePrezime');
+    });
+}
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::table('korisniks', function (Blueprint $table) {
-            //Schema::table('korisniks', function (Blueprint $table){
-                $table->renameColumn('ImePrezime', 'Ime');
-            //});
-        });
-    }
+/**
+ * Reverse the migrations.
+ *
+ * @return void
+ */
+public function down()
+{
+    Schema::table('korisniks', function (Blueprint $table) {
+        $table->renameColumn('ImePrezime', 'Ime');
+    });
+}
+
 };

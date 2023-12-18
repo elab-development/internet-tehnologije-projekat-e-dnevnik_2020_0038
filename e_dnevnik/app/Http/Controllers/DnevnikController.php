@@ -14,10 +14,13 @@ class DnevnikController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($korisnik_id)
+    public function index()
     {
-        $korisnik = Korisnik::find($korisnik_id);
-        $dnevnik = $korisnik->dnevnik()->get();
+        //printf($ucenik_id);
+        //$korisnik_id = $ucenik_id;
+        //$korisnik = Korisnik::find($korisnik_id);
+        //$dnevnik = $korisnik->dnevnik()->get();
+        $dnevnik = Dnevnik::all();
         return new DnevnikCollection($dnevnik);
     }
 

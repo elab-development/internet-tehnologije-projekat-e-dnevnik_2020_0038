@@ -38,9 +38,15 @@ class PredmetController extends Controller
     public function store(Request $request)
     {
         $predmet = new Predmet;
+        //$predmet->razred_id = $request->razred_id;
+        //$request = json_decode($request->getContent(),true);
+        
 
+        //$predmet->NazivPredmeta = $request['NazivPredmeta'];
         $predmet->razred_id = $request->razred_id;
-        $predmet->NazivPredmeta = $request->NazivPredmeta;
+        $request = json_decode($request->getContent(), true);
+        $predmet->NazivPredmeta = $request[0]["NazivPredmeta"];
+
 
         $predmet->save();
     }
@@ -74,9 +80,18 @@ class PredmetController extends Controller
      * @param  \App\Models\Predmet  $predmet
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Predmet $predmet)
+    public function update(Request $request)
     {
-        //
+        $predmet = new Predmet;
+        $predmet->predmet_id = $request->predmet_id;
+        $request = json_decode($request->getContent(), true);
+
+        $predmet->NazivPredmeta = $request[0]["NazivPredmeta"];
+        echo $request[0]["NazivPredmeta"];
+
+        $res = Predmet::where('id',$predmet->predmet_id)->update(array(['NazivPredmeta' => $predmet->NazivPredmeta]));
+//        $res = $predmet->update(array(['predmet_id' => $predmet->predmet_id ,'NazivPredmeta' => $request[0]["NazivPredmeta"]]));
+        return $res ? response()->json('Predmet je uspesno azuriran', 200) : response()->json('Predmet nije azuriran', 404);
     }
 
     /**

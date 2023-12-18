@@ -38,7 +38,12 @@ class RazredController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request = json_decode($request->getContent(), true);
+        $razred = new Razred;
+        $razred->Naziv = $request[0]["Naziv"];
+
+        $res = $razred->save();
+        return $res ? response()->json('Razred je uspesno unet', 200) : response()->json('Razred nije unet', 404);
     }
 
     /**
@@ -72,9 +77,15 @@ class RazredController extends Controller
      * @param  \App\Models\Razred  $razred
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Razred $razred)
+    public function update(Request $request)
     {
-        //
+        $razred = new Razred;
+        $razred->razred_id = $request->razred_id;
+        $request = json_decode($request->getContent(), true);
+        $razred->Naziv = $request[0]["Naziv"];
+        
+        $res = Razred::where('id',$razred->razred_id)->update(array('Naziv' => $razred->Naziv));
+        return $res ? response()->json('Razred je uspesno unet', 200) : response()->json('Razred nije unet', 404);
     }
 
     /**
