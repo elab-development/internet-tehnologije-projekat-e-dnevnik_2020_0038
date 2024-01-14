@@ -20,6 +20,64 @@ class GradeController extends Controller
         return new GradeCollection($grades);
     }
 
+    public function getGradesForStudent($student_id, $subject_id){
+        $grades = Grade::where('student_id', $student_id)->where('subject_id',$subject_id)->get();
+        return new GradeCollection($grades);
+    }
+
+    public function getGradesTypesForStudent($student_id, $grade_type_id){
+        $grades = Grade::where('student_id', $student_id)->where('grade_type_id',$grade_type_id)->get();
+        return new GradeCollection($grades);
+    }
+
+    public function getSubjectGradesOfTypeForStudent($student_id, $subject_id, $grade_type_id){
+        $grades = Grade::where('student_id', $student_id)->where('subject_id',$subject_id)->where('grade_type_id',$grade_type_id)->get();
+        return new GradeCollection($grades);
+    }
+
+    public function getSemestarGrade(Request $request, $professor_id){
+        $grades = Grade::where('student_id', $request->student_id)
+        ->where('subject_id',$request->subject_id)
+        ->where('grade_type_id',2)
+        ->whereMonth('date', '>=', '09')
+        ->get();
+
+        if($grades !== null){
+            $sum = 0;
+            $numberOfGrades = 0.0;
+            foreach($grades as $gr){
+                $sum = $sum + $gr->grade; 
+                $numberOfGrades++;
+            }
+            $sum = $sum/$numberOfGrades;
+            return response()->json('Zakljucna ocena je ' . $sum, 200);
+        }else{
+            return response()->json('Ne postoje ocene', 404);
+        }
+    }
+
+    public function getFinalGrade(Request $request, $professor_id){
+        $grade = Grade::where('student_id', $request->student_id)->where('grade_type_id', 3)->first();
+
+        if($grade instanceof Grade){
+            $grades = Grade::where('student_id', $request->student_id)
+            ->where('subject_id',$request->subject_id)
+            ->whereDate('date', '>', $grade->date)
+            ->get();
+
+            $sum = $grade->grade;
+            $numberOfGrades = 1.0;
+            foreach($grades as $gr){
+                $sum = $sum + $gr->grade; 
+                $numberOfGrades++;
+            }
+            $sum = $sum/$numberOfGrades;
+            return response()->json('Zakljucna ocena je ' . $sum, 200);
+        }else{
+            return response()->json('Ne postoji ocena na polugodistu', 404);
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -43,21 +101,23 @@ class GradeController extends Controller
         $grade->professor_id = $proffesor_id;
         $data = json_decode($request->getContent(), true);
         $rules = [
-            'grade' => 'required|integer|between:1,5',
+            'grade' => 'required|integer',
+            'grade_type_id' => 'required|integer',
             'student_id' => 'required|integer',
             'subject_id' => 'required|integer',
             'date'=> 'required|date'
             //dodaj posle za gradetype
         ];
 
-        $validator = Validator::make($data[0], $rules);
+        $validator = Validator::make($data, $rules);
         if($validator->fails()){
             return response()->json('Ocena, predmet, student mora da bude izabrano', 404);
         }else{
-            $grade->grade = $data[0]["grade"];
-            $grade->student_id = $data[0]["student_id"];
-            $grade->subject_id = $data[0]["subject_id"];
-            $grade->date = $data[0]["date"];
+            $grade->grade = $data["grade"];
+            $grade->student_id = $data["student_id"];
+            $grade->subject_id = $data["subject_id"];
+            $grade->date = $data["date"];
+            $grade->grade_type_id = $data["grade_type_id"];
 
             $res = $grade->save();
             return $res ? response()->json('Ocena je uspesno uneta', 200) : response()->json('Ocena nije uneta', 404);
@@ -94,35 +154,39 @@ class GradeController extends Controller
      * @param  \App\Models\Grade  $grade
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $professor_id)
+
+     //ne moze ovako mora da se trazi i ocena ili datum
+    public function update(Request $request, $student_id)
     {
         $data = json_decode($request->getContent(), true);
         $rules = [
             'grade' => 'required|integer|between:1,5',
         ];
 
-        $validator = Validator::make($data[0], $rules);
+        $validator = Validator::make($data, $rules);
         if($validator->fails()){
-            return response()->json('Ime roditelja mora da bude uneto', 404);
-        }else{
-            $date = $data[0]['date'];
-            $student = $data[0]['student_id'];
-            $subject = $data[0]['subject_id'];
+            return response()->json('Ocena mora da bude izmedju 1 i 5', 404);
+        }else{ 
+            $date = $data['date'];
+            $professor = $data['professor_id'];
+            $subject = $data['subject_id'];
 
-            $grade = Grade::where('date', $date)
-            ->where('subject_id', $subject)
-            ->where('student_id', $student)
-            ->where('professor_id', $professor_id)
+            $grade = Grade::where('subject_id', $subject)
+            ->where('student_id', $student_id)
+            ->where('professor_id', $professor)
+            ->where('date', $date)
             ->first();
 
-        if ($grade) {
-            $grade->grade = $data[0]['grade'];
-            $grade->save();
-
-            return response()->json('Ocena je uspešno ažurirana', 200);
-        } else {
-            return response()->json('Zapis nije pronađen', 404);
-        }
+            if ($grade) {
+                if (isset($data['grade'])) {
+                    $grades = $grade->update(['grade' => $data['grade']]);
+                    return response()->json('Ocena je uspešno ažurirana', 200);
+                } else {
+                    return response()->json('Nedostaje ključ "grade" u podacima', 400);
+                }
+            } else {
+                return response()->json('Zapis nije pronađen', 404);
+            }
         }
     }
 

@@ -42,7 +42,7 @@ class SchoolGradeController extends Controller
     {
         $request = json_decode($request->getContent(), true);
         $grade = new SchoolGrade;
-        $grade->name_of_school_grade = $request[0]["Name"];
+        $grade->name_of_school_grade = $request["Name"];
 
         $res = $grade->save();
         return $res ? response()->json('Razred je uspesno unet', 200) : response()->json('Razred nije unet', 404);

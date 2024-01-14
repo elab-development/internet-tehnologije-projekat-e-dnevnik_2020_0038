@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ProfessorCollection;
+use App\Http\Resources\SubjectCollection;
 use App\Models\Professor;
+use App\Models\Subject;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class ProfessorController extends Controller
@@ -19,6 +22,8 @@ class ProfessorController extends Controller
         $professors = Professor::all();
         return new ProfessorCollection($professors);
     }
+
+    
 
     /**
      * Show the form for creating a new resource.
@@ -41,14 +46,18 @@ class ProfessorController extends Controller
         $type = new Professor;
         $data = json_decode($request->getContent(), true);
         $rules = [
-            'NameSurname' => 'required|max:50'
+            'name_surname' => 'required|max:50',
+            'email' => 'required|email|unique:student_parents,email',
+            'password' => 'required|min:6'
         ];
 
-        $validator = Validator::make($data[0], $rules);
+        $validator = Validator::make($data, $rules);
         if($validator->fails()){
             return response()->json('Ime profesora ocene mora da bude uneto', 404);
         }else{
-            $type->name_surname = $data[0]["NameSurname"];
+            $type->name_surname = $data["name_surname"];
+            $type->email = $data["email"];
+            $type->password = Hash::make($data["password"]);
 
             $res = $type->save();
             return $res ? response()->json('Profesor je uspesno unet', 200) : response()->json('Profesor nije unet', 404);
@@ -92,7 +101,7 @@ class ProfessorController extends Controller
             'NameSurname' => 'required|max:50'
         ];
 
-        $validator = Validator::make($data[0], $rules);
+        $validator = Validator::make($data, $rules);
         if($validator->fails()){
             return response()->json('Ime profesora mora da bude uneto', 404);
         }else{

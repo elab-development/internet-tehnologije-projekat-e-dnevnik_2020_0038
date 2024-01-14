@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('student_parents', function (Blueprint $table) {
-            $table->dropColumn('surname');
+        Schema::table('professors', function (Blueprint $table) {
+            $table->dropColumn('name');
         });
     }
 
@@ -25,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('student_parents', function (Blueprint $table) {
-            $table->string('surname')->after('name');
+        Schema::table('professors', function (Blueprint $table) {
+            $table->string('name')->after('name_surname');
         });
     }
 };

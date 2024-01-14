@@ -17,6 +17,7 @@ class SubjectResource extends JsonResource
         return [
             'id' =>$this->resource->id,
             'subject_name'=>$this->resource->subject_name,
+            'professor' => $this->resource->professor,
             'grade'=> $this->resource->schoolGrade
         ];
     }

@@ -20,7 +20,8 @@ class GradeResource extends JsonResource
             'grade' => $this->resource->grade,
             'subject' => $this->resource->subject->toArray(),
             'student' => $this->resource->student->toArray(),
-            'professor' => $this->resource->professor->toArray()
+            'professor' => $this->resource->professor->toArray(),
+            'gradeType' => $this->resource->gradeType->toArray()
         ];
     }
 }

@@ -45,11 +45,11 @@ class GradeTypeController extends Controller
             'GradeType' => 'required|max:50'
         ];
 
-        $validator = Validator::make($data[0], $rules);
+        $validator = Validator::make($data, $rules);
         if($validator->fails()){
             return response()->json('Ime tipa ocene mora da bude uneto', 404);
         }else{
-            $type->grade_type_name = $data[0]["GradeType"];
+            $type->grade_type_name = $data["GradeType"];
 
             $res = $type->save();
             return $res ? response()->json('Tip ocene je uspesno unet', 200) : response()->json('Tip ocene nije unet', 404);
@@ -93,7 +93,7 @@ class GradeTypeController extends Controller
             'GradeType' => 'required|max:50'
         ];
 
-        $validator = Validator::make($data[0], $rules);
+        $validator = Validator::make($data, $rules);
         if($validator->fails()){
             return response()->json('Ime tipa ocene mora da bude uneto', 404);
         }else{

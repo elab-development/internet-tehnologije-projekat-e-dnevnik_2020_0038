@@ -1,5 +1,7 @@
 <?php
 
+use Laravel\Sanctum\PersonalAccessToken;
+
 return [
 
     /*
@@ -40,6 +42,51 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'api' => [
+            'driver' => 'token',
+            'provider' => 'users',
+        ],
+
+        'student_parent' =>[
+            'driver' => 'session',
+            'provider' => 'student_parents',
+        ],
+
+        'student' => [
+            'driver' => 'session',
+            'provider' => 'students',
+        ],
+
+        'professor' => [
+            'driver' => 'session',
+            'provider' => 'professors',
+        ],
+
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
+
+        'student_parent-api' => [
+            'driver' => 'sanctum',
+            'provider' => 'student_parents',
+        ],
+    
+        'professor-api' => [
+            'driver' => 'sanctum',
+            'provider' => 'professors',
+        ],
+    
+        'student-api' => [
+            'driver' => 'sanctum',
+            'provider' => 'students',
+        ],
+
+        'admin-api' => [
+            'driver' => 'sanctum',
+            'provider' => 'admins',
+        ],
     ],
 
     /*
@@ -57,12 +104,32 @@ return [
     |
     | Supported: "database", "eloquent"
     |
-    */
+    */ 
 
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => PersonalAccessToken::class,
+        ],
+
+        'student_parents' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\StudentParent::class,
+        ],
+
+        'students' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Student::class,
+        ],
+
+        'professors' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Professor::class,
+        ],
+
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
         ],
 
         // 'users' => [

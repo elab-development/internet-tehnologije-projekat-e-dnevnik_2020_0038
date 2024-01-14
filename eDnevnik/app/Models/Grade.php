@@ -9,7 +9,7 @@ class Grade extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['date', 'subject_id', 'student_id','grade','professor_id'];
+    protected $fillable = ['date', 'subject_id', 'student_id','grade','professor_id', 'grade_type_id'];
 
     protected $primaryKey = ['date','subject_id','student_id'];
 
@@ -24,11 +24,11 @@ class Grade extends Model
     {
         return $this->belongsTo(Subject::class); 
     }
-/*
+
     public function gradeType() 
     {
         return $this->belongsTo(GradeType::class); 
-    }*/
+    }
 
     public function professor() 
     {

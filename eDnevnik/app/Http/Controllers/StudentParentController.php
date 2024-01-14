@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\StudentParentCollection;
+use App\Http\Resources\StudentParntCollection;
+use App\Models\Student;
 use App\Models\StudentParent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class StudentParentController extends Controller
@@ -18,6 +21,12 @@ class StudentParentController extends Controller
     {
         $students = StudentParent::all();
         return new StudentParentCollection($students);
+    }
+
+    public function getParent(Request $request, $student_id){
+        $student = Student::where('id', $student_id)->first();
+        $parent = StudentParent::where('id', $student->student_parent_id)->get();
+        return new StudentParentCollection($parent);
     }
 
     /**
@@ -41,14 +50,18 @@ class StudentParentController extends Controller
         $parent = new StudentParent;
         $data = json_decode($request->getContent(), true);
         $rules = [
-            'NameSurname' => 'required|max:50'
+            'name_surname' => 'required|max:50',
+            'email' => 'required|email|unique:student_parents,email',
+            'password' => 'required|min:6'
         ];
 
-        $validator = Validator::make($data[0], $rules);
+        $validator = Validator::make($data, $rules);
         if($validator->fails()){
             return response()->json('Ime roditelja mora da bude uneto', 404);
         }else{
-            $parent->name = $data[0]["NameSurname"];
+            $parent->name_surname = $data["name_surname"];
+            $parent->email = $data["email"];
+            $parent->password = Hash::make($data["password"]);
 
             $res = $parent->save();
             return $res ? response()->json('Roditelj je uspesno unet', 200) : response()->json('Roditelj nije unet', 404);
@@ -92,11 +105,11 @@ class StudentParentController extends Controller
             'NameSurname' => 'required|max:50'
         ];
 
-        $validator = Validator::make($data[0], $rules);
+        $validator = Validator::make($data, $rules);
         if($validator->fails()){
             return response()->json('Ime roditelja mora da bude uneto', 404);
         }else{
-            $grade= StudentParent::find($parent_id)->update(['name' => $data[0]["NameSurname"]]);
+            $grade= StudentParent::find($parent_id)->update(['name_surname' => $data[0]["NameSurname"]]);
             return response()->json('Roditelj je uspesno azuriran', 200);
         }
     }

@@ -11,6 +11,7 @@ class Subject extends Model
 
     protected $fillable = [
         'subject_name',
+        'professor_id',
         'school_grade_id'
     ];
 
@@ -22,5 +23,10 @@ class Subject extends Model
     public function grade() 
     {
         return $this->hasMany(Grade::class); 
+    }
+
+    public function professor()
+    {
+        return $this->belongsTo(Professor::class);
     }
 }

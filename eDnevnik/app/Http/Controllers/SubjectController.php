@@ -21,6 +21,11 @@ class SubjectController extends Controller
         return new SubjectCollection($subjects);
     }
 
+    public function getAllSubjects($professor_id){
+        $subjects = Subject::where('professor_id',$professor_id)->get();
+        return new SubjectCollection($subjects);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -43,14 +48,16 @@ class SubjectController extends Controller
         $subject->school_grade_id = $school_grade_id;
         $data = json_decode($request->getContent(), true);
         $rules = [
-            'SubjectName' => 'required|max:50'
+            'SubjectName' => 'required|max:50',
+            'Professor' => 'required'
         ];
 
-        $validator = Validator::make($data[0], $rules);
+        $validator = Validator::make($data, $rules);
         if($validator->fails()){
             return response()->json('Ime predmeta mora da bude uneto', 404);
         }else{
-            $subject->subject_name = $data[0]["SubjectName"];
+            $subject->subject_name = $data["SubjectName"];
+            $subject->professor_id = $data["Professor"];
 
             $res = $subject->save();
             return $res ? response()->json('Predmet je uspesno unet', 200) : response()->json('Predmet nije unet', 404);
