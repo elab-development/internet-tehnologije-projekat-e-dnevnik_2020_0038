@@ -105,7 +105,7 @@ class ProfessorController extends Controller
         if($validator->fails()){
             return response()->json('Ime profesora mora da bude uneto', 404);
         }else{
-            $grade= Professor::find($professor_id)->update(['name_surname' => $data[0]["NameSurname"]]);
+            $grade= Professor::find($professor_id)->update(['name_surname' => $data["NameSurname"]]);
             return response()->json('Profesor je uspesno azuriran', 200);
         }
     }

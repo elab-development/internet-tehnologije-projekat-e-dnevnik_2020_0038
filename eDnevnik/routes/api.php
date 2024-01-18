@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthControllerAdmin;
 use App\Http\Controllers\AuthControllerProfessor;
@@ -16,6 +17,7 @@ use App\Http\Middleware\AdminAuthenticated;
 use App\Models\Grade;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Password;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,13 +34,21 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/loginRoditelja',[AuthControllerStudentParent::class,'login']);
+Route::post('/zaboravljenaLozinka', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 
-Route::post('/loginUcenika',[AuthControllerStudent::class,'login']);
+Route::get('/zaboravljenaLoznika/{token}', function (string $token) {
+    return response()->json(['token' => $token]);
+})->name('password.reset');
 
-Route::post('/loginProfesora',[AuthControllerProfessor::class,'login']);
+Route::post('/resetLozinka/reset',[ForgotPasswordController::class,'reset'])->name('password.update');
 
-Route::post('/loginAdmina',[AuthControllerAdmin::class,'login']);
+/* Laravel docs
+Route::get('/reset-password/{token}', function (string $token) {
+    return view('auth.reset-password', ['token' => $token]);
+})->middleware('guest')->name('password.reset');
+*/
+
+
 
 Route::post('/registrujAdmina',[AuthControllerAdmin::class,'register']);
 
@@ -207,11 +217,19 @@ Route::group(['middleware' => ['auth:sanctum', 'student']], function (){
     Route::get('/students/{student_id}/grades',[GradeController::class,'show']);
 });
 
+
 //
 /*{
     "email": "tanjaKilibarda@gmail.com",
     "password": "tanja123"
 }*/
+        Route::post('/loginRoditelja',[AuthControllerStudentParent::class,'login']);
+
+        Route::post('/loginUcenika',[AuthControllerStudent::class,'login']);
+
+        Route::post('/loginProfesora',[AuthControllerProfessor::class,'login']);
+
+        Route::post('/loginAdmina',[AuthControllerAdmin::class,'login']);
 
     Route::group(['middleware' => ['auth:sanctum']],function (){
         Route::middleware('student_parent')->get('studentParent/{parent_id}/students', [StudentController::class, 'getChildren']);
@@ -223,6 +241,8 @@ Route::group(['middleware' => ['auth:sanctum', 'student']], function (){
         Route::middleware('professor')->post('/logoutProfesora',[AuthControllerProfessor::class,'logout']);
 
         Route::middleware('admin')->post('/logoutAdmina',[AuthControllerAdmin::class,'logout']);
+
+        
     });
 /*"name_surname":"Pera Peric",
     "email":"peraPera@gmail.com",

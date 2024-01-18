@@ -23,6 +23,7 @@ class AuthControllerStudent extends Controller
             'name_surname' => 'required',
             'email' => 'required|email|unique:student_parents,email',
             'password' => 'required|min:6',
+            'age' => 'required|min:15',
             'student_paren_id' => 'required'
         ];
 
@@ -30,17 +31,13 @@ class AuthControllerStudent extends Controller
         if($validator->fails()){
             return response()->json($validator->errors(),400);
         }
-/*
-        $parent = new StudentParent;
-        $parent->name_surname = $data[0]["name_surname"];
-        $parent->email = $data[0]["email"];
-        $parent->password = Hash::make($data[0]["password"]);
-*/
+
         $parent = Student::create([
             'name_surname' => $data["name_surname"],
             'email' => $data["email"],
             'password' => Hash::make($data["password"]),
-            'student_parent_id' => $data["student_parent_id"]
+            'student_parent_id' => $data["student_parent_id"],
+            'age' => $data["age"]
         ]);
 
         $token = $parent->createToken('auth_token')->plainTextToken;

@@ -160,6 +160,26 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+        'student_parent' => [
+        'provider' => 'student_parents',
+        'table' => 'password_resets',
+        'expire' => 60,
+        ],
+        'student' => [
+        'provider' => 'students',
+        'table' => 'password_resets',
+        'expire' => 60,
+        ],
+        'professor' => [
+        'provider' => 'professors',
+        'table' => 'password_resets',
+        'expire' => 60,
+        ],
+        'admin' => [
+        'provider' => 'admins',
+        'table' => 'password_resets',
+        'expire' => 60,
+        ],
     ],
 
     /*

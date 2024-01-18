@@ -7,10 +7,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 
-class Student extends Model implements Authenticatable
+class Student extends Model implements Authenticatable, CanResetPassword
 {
     use HasApiTokens, Notifiable, HasFactory;
+    function getEmailForPasswordReset(){
+        return $this->email;
+    }
+
+    /**
+    * Send the password reset notification.
+    *
+    * @param  string  $token
+    * @return void
+    */
+    function sendPasswordResetNotification($token){
+        $this->notify(new ResetPasswordNotification($token));
+    }
     function getAuthIdentifierName(){
         return 'id';
     }
