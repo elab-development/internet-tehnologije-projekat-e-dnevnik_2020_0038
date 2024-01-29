@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\AdminAuthenticated;
+use App\Http\Middleware\IsAuthenticated;
 use App\Http\Middleware\ProfessorAuthenticated;
 use App\Http\Middleware\StudentAuthenticated;
 use App\Http\Middleware\StudentParentAuthenticated;
@@ -71,7 +72,8 @@ class Kernel extends HttpKernel
         'student_parent' => StudentParentAuthenticated::class,
         'professor' => ProfessorAuthenticated::class,
         'student' => StudentAuthenticated::class,
-        'admin' => AdminAuthenticated::class
+        'admin' => AdminAuthenticated::class,
+        'isauth' => IsAuthenticated::class
     ];
 
 

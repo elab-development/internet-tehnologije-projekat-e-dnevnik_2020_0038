@@ -29,6 +29,8 @@ class StudentController extends Controller
         return new StudentCollection($students);
     }
 
+
+    //TODO: Join treba ovde
     public function getAllStudentsForSubject($subject_id){
         //mozda join fja da probas
         $subject = Subject::where('id',$subject_id)->first();
@@ -63,17 +65,19 @@ class StudentController extends Controller
             'name_surname' => 'required|max:50',
             'email' => 'required|email|unique:student_parents,email',
             'password' => 'required|min:6',
-            'school_grade' => 'required'
+            'school_grade' => 'required',
+            'age' => 'required'
         ];
 
         $validator = Validator::make($data, $rules);
         if($validator->fails()){
-            return response()->json('Ime ucenika mora da bude uneto', 404);
+            return response()->json('Niste pravilno uneli podatke za ucenika', 404);
         }else{
             $student->name_surname = $data["name_surname"];
             $student->email = $data["email"];
             $student->password = Hash::make($data["password"]);
             $student->school_grade_id = $data["school_grade"];
+            $student->age = $data["age"];
 
             $res = $student->save();
             return $res ? response()->json('Student je uspesno unet', 200) : response()->json('Student nije unet', 404);

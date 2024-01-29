@@ -62,4 +62,9 @@ class Professor extends Model implements Authenticatable, CanResetPassword
     {
         return $this->hasMany(Grade::class); 
     }
+
+    public function subjects() 
+    {
+        return $this->hasMany(Subject::class); 
+    }
 }

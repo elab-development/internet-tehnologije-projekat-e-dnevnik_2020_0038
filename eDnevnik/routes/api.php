@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthControllerStudent;
 use App\Http\Controllers\AuthControllerStudentParent;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\GradeTypeController;
+use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ProfessorController;
 use App\Http\Controllers\SchoolGradeController;
 use App\Http\Controllers\StudentController;
@@ -34,13 +35,20 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/zaboravljenaLozinka', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+
+Route::get('/login', function () {
+    return response()->json(['Poruka' => 'Dobrodosli na login stranicu']);;
+})->name('login')->middleware('guest');
+
+Route::post('/zaboravljenaLozinka', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email')->middleware('guest');
 
 Route::get('/zaboravljenaLoznika/{token}', function (string $token) {
     return response()->json(['token' => $token]);
-})->name('password.reset');
+})->name('password.reset')->middleware('guest');
 
-Route::post('/resetLozinka/reset',[ForgotPasswordController::class,'reset'])->name('password.update');
+Route::post('/resetLozinka/reset',[ForgotPasswordController::class,'reset'])->name('password.update')->middleware('guest');
+
+Route::get('generate-pdf/{student_id}', [PDFController::class, 'generatePDF']);
 
 /* Laravel docs
 Route::get('/reset-password/{token}', function (string $token) {
@@ -49,15 +57,11 @@ Route::get('/reset-password/{token}', function (string $token) {
 */
 
 
-
 Route::post('/registrujAdmina',[AuthControllerAdmin::class,'register']);
 
 Route::group(['middleware' => ['auth:sanctum', 'professor']], function (){
 
     Route::get('/schoolGrades',[SchoolGradeController::class,'index']);
-
-    //radi - prikaz svih tipova ocena - svi
-    Route::get('/typeOfGrades',[GradeTypeController::class,'index']);
 
     //radi - vraca odredjeni predmet -prof i admin
     Route::get('/subjects/{subject_id}',[SubjectController::class,'show']);
@@ -81,15 +85,14 @@ Route::group(['middleware' => ['auth:sanctum', 'professor']], function (){
     //radi - vraca sve ucenike za odredjeni predmet (ide po razredu)
     Route::get('/subjects/{subject_id}/students', [StudentController::class,'getAllStudentsForSubject']);
 
-    //ne radi - izbacuje gresku kod save - menja unetu ocenu 
-    // TODO: da izbrise tu ocenu pa da sacuva samo novu i vidi da li radi ubacivanje ocene
-    Route::put('/students/{student_id}/grades',[GradeController::class,'update']);
+    //radi - menja unetu ocenu 
+    Route::post('/students/{student_id}/grades',[GradeController::class,'update']);
 
     //radi - brise odredjenu ocenu
     Route::post('/professors/{professor_id}/deleteGrades', [GradeController::class,'destroy']);
 
     //radi - prikaz odredjenog ucenika - kao njegov profil svi
-    Route::get('/students/{student_id}',[StudentController::class,'show']);
+    Route::get('/studentsProfile/{student_id}',[StudentController::class,'show']);
 
 });
 
@@ -107,9 +110,6 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function (){
 
     //admin
     //Route::post('/registrujAdmina',[AuthControllerAdmin::class,'register']);//isto kao store i admin ce da radi
-
-    //radi - prikaz svih razreda
-    Route::get('/schoolGrades',[SchoolGradeController::class,'index']);
 
     //radi - unos novog razreda
     Route::post('/schoolGrades',[SchoolGradeController::class, 'store']);
@@ -139,7 +139,7 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function (){
     Route::put('/typeOfGrades/{type_of_grade_id}',[GradeTypeController::class,'update']);
 
     //radi - dodaje novi tip ocene
-    Route::post('/typeOfGrades', [GradeTypeController::class,'store']);
+    //Route::post('/typeOfGrades', [GradeTypeController::class,'store']);
 
     //radi - brisanje odredjenog tipa
     Route::delete('/typeOfGrades/{type_of_grade_id}', [GradeTypeController::class,'destroy']);
@@ -189,9 +189,11 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function (){
     //radi - prikaz svih ocena
     Route::resource('/grades',GradeController::class);
 
+    //nece da radi vrv jer ima dupla ruta
     Route::get('/schoolGrades',[SchoolGradeController::class,'index']);
 });
 
+Route::get('/typeOfGrades',[GradeTypeController::class,'index'])->middleware('isauth');
 
 Route::group(['middleware' => ['auth:sanctum', 'student']], function (){
 
@@ -199,7 +201,7 @@ Route::group(['middleware' => ['auth:sanctum', 'student']], function (){
     Route::get('/schoolGrades/{school_grade_id}/subjects',[SchoolGradeController::class,'show']);
 
     //radi - prikaz svih tipova ocena - svi
-    Route::get('/typeOfGrades',[GradeTypeController::class,'index']);
+    //Route::get('/typeOfGrades',[GradeTypeController::class,'index']);
 
     //radi - prikaz odredjenog ucenika - kao njegov profil svi
     Route::get('/students/{student_id}',[StudentController::class,'show']);

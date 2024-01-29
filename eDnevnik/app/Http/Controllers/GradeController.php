@@ -101,7 +101,7 @@ class GradeController extends Controller
         $grade->professor_id = $proffesor_id;
         $data = json_decode($request->getContent(), true);
         $rules = [
-            'grade' => 'required|integer',
+            'grade' => 'required',
             'grade_type_id' => 'required|integer',
             'student_id' => 'required|integer',
             'subject_id' => 'required|integer',
@@ -160,7 +160,7 @@ class GradeController extends Controller
     {
         $data = json_decode($request->getContent(), true);
         $rules = [
-            'grade' => 'required|integer|between:1,5',
+            'grade' => 'required',
         ];
 
         $validator = Validator::make($data, $rules);
@@ -171,16 +171,30 @@ class GradeController extends Controller
             $professor = $data['professor_id'];
             $subject = $data['subject_id'];
 
+            $updated_grade = new Grade();
+
             $grade = Grade::where('subject_id', $subject)
             ->where('student_id', $student_id)
             ->where('professor_id', $professor)
             ->where('date', $date)
             ->first();
 
-            if ($grade) {
+            $updated_grade->grade = $data['grade'];
+            $updated_grade->student_id = $grade->student_id;
+            $updated_grade->subject_id = $grade->subject_id;
+            $updated_grade->date = $grade->date;
+            $updated_grade->grade_type_id = $grade->grade_type_id;
+            $updated_grade->professor_id = $professor;
+            
+            $grade = Grade::where('subject_id', $subject)
+            ->where('student_id', $student_id)
+            ->where('professor_id', $professor)
+            ->where('date', $date)
+            ->delete();
+            if ($updated_grade) {
                 if (isset($data['grade'])) {
-                    $grades = $grade->update(['grade' => $data['grade']]);
-                    return response()->json('Ocena je uspešno ažurirana', 200);
+                    $res = $updated_grade->save();
+                    return $res ? response()->json('Ocena je uspesno izmenjena', 200) : response()->json('Ocena nije izmernjena', 404);
                 } else {
                     return response()->json('Nedostaje ključ "grade" u podacima', 400);
                 }
@@ -204,7 +218,7 @@ class GradeController extends Controller
         $student = $data[0]['student_id'];
         $subject = $data[0]['subject_id'];
         
-        $res = $grade = Grade::where('date', $date)
+        $res  = Grade::where('date', $date)
             ->where('subject_id', $subject)
             ->where('student_id', $student)
             ->where('professor_id', $professor_id)

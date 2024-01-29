@@ -50,7 +50,8 @@ class Student extends Model implements Authenticatable, CanResetPassword
         'email',
         'password',
         'student_parent_id',
-        'school_grade_id'
+        'school_grade_id',
+        'age'
     ];
 
     protected $hidden = [
