@@ -11,7 +11,7 @@ export default function ProfessorLayout() {
       case "student":
         return <Navigate to="/studentHome" />;
       case "parent":
-        return <Navigate to="/children" />;
+        return <Navigate to="/parentHome" />;
     }
   }
 

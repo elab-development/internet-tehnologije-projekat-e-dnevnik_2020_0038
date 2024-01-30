@@ -1,3 +1,9 @@
 export default function StudentHome() {
-  return <div>Login</div>;
+  return (
+    <div>
+      <div className="container"></div>
+
+      <div className="container"></div>
+    </div>
+  )
 }

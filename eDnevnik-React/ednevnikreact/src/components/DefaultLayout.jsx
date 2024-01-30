@@ -5,7 +5,7 @@ export default function DefaultLayout() {
     const {user, userType, token} = useStateContext()
 
     if(!token){
-        return <Navigate to="/home" />
+        return <Navigate to="/" />
     }
 
     return (

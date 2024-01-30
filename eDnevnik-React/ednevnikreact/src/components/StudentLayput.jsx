@@ -12,6 +12,7 @@ export default function StudentLayout() {
 
   return (
     <div style={{ height: "100vh" }}>
+      
       <Outlet />
     </div>
   );

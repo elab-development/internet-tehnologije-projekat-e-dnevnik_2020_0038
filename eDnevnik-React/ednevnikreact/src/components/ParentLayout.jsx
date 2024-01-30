@@ -10,8 +10,8 @@ export default function ParentLayout() {
     switch (userType) {
       case "student":
         return <Navigate to="/studentHome" />;
-      case "parent":
-        return <Navigate to="/children" />;
+      case "professor":
+        return <Navigate to="/professorHome" />;
     }
   }
 

@@ -30,7 +30,7 @@ class StudentController extends Controller
     }
 
 
-    //TODO: Join treba ovde
+    
     public function getAllStudentsForSubject($subject_id){
         //mozda join fja da probas
         $subject = Subject::where('id',$subject_id)->first();

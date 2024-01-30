@@ -26,19 +26,28 @@ export const ContextProvider = ({children})  =>{
     const setUserAndType = (userData, type) => {
       setUser(userData);
       setUserType(type);
+      localStorage.setItem("userType", type);
+    };
+
+    const setUserTypeFn = (type) => {
+      setUserType(type);
+      localStorage.setItem("userType", type);
     };
 
     return (
-        <StateContext.Provider value={{
-            user,
-            token,
-            userType,
-            setUser: setUserAndType,
-            setToken
-        }}>
-            {children}
-        </StateContext.Provider>
-    )
+      <StateContext.Provider
+        value={{
+          user,
+          token,
+          userType,
+          setUser: setUserAndType,
+          setToken,
+          setUserType: setUserTypeFn,
+        }}
+      >
+        {children}
+      </StateContext.Provider>
+    );
 }
 
 export const useStateContext = () => {
