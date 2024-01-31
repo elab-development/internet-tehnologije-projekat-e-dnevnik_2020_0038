@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useStateContext } from "../contexts/ContextProvider";
+import NavBarComponent from "./NavBarComponent";
 
 export default function ParentLayout() {
   const { user, userType, token } = useStateContext();
@@ -17,6 +18,7 @@ export default function ParentLayout() {
 
   return (
     <div style={{ height: "100vh" }}>
+      <NavBarComponent Text={"Dobrodosli na sajt roditelja"} />
       <Outlet />
     </div>
   );

@@ -1,12 +1,22 @@
 import { useStateContext } from "../contexts/ContextProvider.jsx";
+import { Link } from "react-router-dom";
 
 export default function LogOutButton() {
-  const { user, userType } = useStateContext();
+  const { user, userType, token, setToken, setUserType } = useStateContext();
+
+  const logoutUser = () => {
+    debugger;
+    setToken();
+    setUserType();
+    localStorage.removeItem("ACCESS_TOKEN");
+    localStorage.removeItem("userType");
+  }
 
   return (
-    <div className="containers">
-      <ContainerComponent Text={"Ocene"} Image={"ocene"} />
-      <ContainerComponent Text={"Profil"} Image={"profil"} />
+    <div>
+      <Link to="/">
+        <button onClick={logoutUser}>Logout</button>
+      </Link>
     </div>
   );
 }
