@@ -11,6 +11,9 @@ import Home from "./home";
 import NotFound from "./views/NotFound";
 import DefaultLayout from "./components/DefaultLayout";
 import GuestLayout from "./components/GuestLayout";
+import StudentLayout from "./components/StudentLayput";
+import ProfessorLayout from "./components/ProfessorLayout";
+import ParentLayout from "./components/ParentLayout";
 
 const router = createBrowserRouter([
   {
@@ -28,36 +31,48 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/",
-    element: <DefaultLayout />,
+    path: "/student",
+    element: <StudentLayout />,
     children: [
       {
-        path: "/profile",
-        element: <StudentProfile />,
-      },
-      {
-        path: "/studentHome",
+        path: "/student/",
         element: <StudentHome />,
       },
       {
-        path: "/studensGrade",
+        path: "/student/profile",
+        element: <StudentProfile />,
+      },
+      {
+        path: "/student/grade",
         element: <StudentGrades />,
       },
+    ],
+  },
+  {
+    path: "/professor",
+    element: <ProfessorLayout />,
+    children: [
       {
-        path: "/parentHome",
-        element: <ParentHome />,
-      },
-      {
-        path: "/professorHome",
+        path: "/professor/",
         element: <ProfessorHome />,
       },
       {
-        path: "/insertGrade",
+        path: "/professor/insertGrade",
         element: <ProfessorInsert />,
       },
       {
-        path: "/changeGrade",
+        path: "/professor/changeGrade",
         element: <ProfessorChange />,
+      },
+    ],
+  },
+  {
+    path: "/parent",
+    element: <ParentLayout />,
+    children: [
+      {
+        path: "/parent/",
+        element: <ParentHome />,
       },
     ],
   },

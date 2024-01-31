@@ -5,13 +5,13 @@ export default function ParentLayout() {
   const { user, userType, token } = useStateContext();
 
   if (!token) {
-    return <Navigate to="/home" />;
+    return <Navigate to="/" />;
   } else if (userType !== "parent") {
     switch (userType) {
       case "student":
-        return <Navigate to="/studentHome" />;
+        return <Navigate to="/student/" />;
       case "professor":
-        return <Navigate to="/professorHome" />;
+        return <Navigate to="/professor/" />;
     }
   }
 

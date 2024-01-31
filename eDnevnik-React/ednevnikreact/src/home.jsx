@@ -5,12 +5,16 @@ import { Navigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
 
 function Home() {
-    const {setUserType } = useStateContext();
+    const {setUserType, token } = useStateContext();
 
     const storedUserType = localStorage.getItem("userType");
 
     if (typeof storedUserType != "undefined") {
       localStorage.removeItem("userType");
+    }
+
+    if (typeof token != "undefined") {
+      localStorage.removeItem("ACCESS_TOKEN");
     }
     const handleUserTypeSelection = (selectedUserType) => {
         setUserType(selectedUserType);
