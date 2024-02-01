@@ -13,14 +13,6 @@ export default function StudentGrade() {
   }
 
   const grades = [];
-  const grnames = [
-    "Matematika",
-    "Fizika",
-    "Biologija",
-    "Geografija",
-    "Istorija",
-    "Fizicko",
-  ];
 
 
   for (let index = 0; index < number; index++) {

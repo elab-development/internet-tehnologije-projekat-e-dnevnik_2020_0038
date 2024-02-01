@@ -217,3 +217,21 @@ button {
     overflow-y:scroll; 
     height:450px;
 }
+
+#profgrades{
+    height:250px;
+}
+
+.formaProf{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 300px;
+}
+
+.insertgrade{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

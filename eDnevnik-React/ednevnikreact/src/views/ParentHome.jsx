@@ -7,14 +7,17 @@ export default function ParentHome() {
     <div className="page">
       <div className="students">
         <Link to="/student/">
-          <StudentComponent style={{ textDecoration: "none" }} />
+          <StudentComponent
+            style={{ textDecoration: "none" }}
+            Name={"Pera Peric"}
+          />
         </Link>
 
         <Link to="/student/">
-          <StudentComponent />
+          <StudentComponent Name={"Zika Peric"} />
         </Link>
         <Link to="/student/">
-          <StudentComponent />
+          <StudentComponent Name={"Mika Peric"} />
         </Link>
       </div>
     </div>

@@ -14,6 +14,7 @@ import GuestLayout from "./components/GuestLayout";
 import StudentLayout from "./components/StudentLayput";
 import ProfessorLayout from "./components/ProfessorLayout";
 import ParentLayout from "./components/ParentLayout";
+import ProfessorDelete from "./views/ProfessorDelete";
 
 const router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
         path: "/professor/changeGrade",
         element: <ProfessorChange />,
       },
+      {
+        path: "/professor/deleteGrade",
+        element: <ProfessorDelete />
+      }
     ],
   },
   {

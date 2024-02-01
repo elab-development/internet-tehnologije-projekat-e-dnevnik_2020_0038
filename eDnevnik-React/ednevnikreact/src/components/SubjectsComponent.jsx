@@ -1,8 +1,8 @@
 
-export default function SubjectsComponent(props) {
+export default function SubjectsComponent({ SubjectName, onClick }) {
   return (
-    <div className="subject">
-      <p>{props.SubjectName}</p>
+    <div className="subject" onClick={onClick}>
+      <p>{SubjectName}</p>
     </div>
   );
 }

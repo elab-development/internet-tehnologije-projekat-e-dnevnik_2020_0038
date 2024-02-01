@@ -10,13 +10,12 @@ export default function Login() {
 
     let type;
 
-
     const storedUserType = localStorage.getItem("userType");
-    if (typeof storedUserType === "undefined" || storedUserType === null) {
+    //if (typeof storedUserType === "undefined" || storedUserType === null) {
       // Ako tip korisnika nije definisan, preusmeri korisnika na početnu stranicu
-      return <Navigate to="/" />;
-    }
-    switch (storedUserType) {
+      //return <Navigate to="/" />;
+    //}
+    switch (userType) {
       case "student":
         type = "Ucenik";
         break;
@@ -31,8 +30,8 @@ export default function Login() {
     const sendTo = () => {
       debugger;
       setToken(123);
-      setUserType(storedUserType);
-      switch (storedUserType) {
+      setUserType(userType);
+      switch (userType) {
         case "student":
           navigate("/student/");
           break;

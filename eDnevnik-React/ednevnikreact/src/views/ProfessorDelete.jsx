@@ -4,7 +4,7 @@ import BackButton from "../components/BackButton.jsx";
 import StudentComponent from "../components/StudentComponent.jsx";
 import React, { useState, useEffect } from "react";
 
-export default function ProfessorChange() {
+export default function ProfessorDelete() {
   const number = 4;
   const subjects = [];
   const names = [
@@ -25,7 +25,6 @@ export default function ProfessorChange() {
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [selectedGrade, setSelectedGrade] = useState(null);
-  const [inputValue, setInputValue] = useState("");
 
   for (let index = 0; index < number; index++) {
     subjects.push(<SubjectsComponent SubjectName={names[index]} />);
@@ -79,11 +78,8 @@ export default function ProfessorChange() {
 
   let grad = 0;
 
-  
-
   useEffect(() => {
-    console.log(`Izabrana ocena: ${selectedSubject}`);
-    setInputValue(selectedGrade ? selectedGrade.props.Grade : "");
+
   }, [selectedGrade]);
   return (
     <div>
@@ -141,15 +137,10 @@ export default function ProfessorChange() {
               Datum: {selectedGrade ? selectedGrade.props.Date : ""}
             </p>
 
-            <label htmlFor="ocenaProf">Unesite ocenu/aktivnost:</label>
-            <input
-              type="text"
-              id="ocenaProf"
-              style={{ marginBottom: "5px" }}
-              value={inputValue}
-              onChange={(e) => setInputValue()}
-            />
-            <button style={{ marginLeft: "50px" }}>Izmeni ocenu</button>
+            <p style={{ margin: "5px", marginLeft: "0px" }}>
+              Ocena: {selectedGrade ? selectedGrade.props.Grade : ""}
+            </p>
+            <button style={{ marginLeft: "50px" }}>Izbrisi ocenu</button>
           </form>
 
           <div style={{ width: "450px" }}>

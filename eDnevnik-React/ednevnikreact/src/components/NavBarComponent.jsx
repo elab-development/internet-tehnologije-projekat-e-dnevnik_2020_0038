@@ -23,7 +23,7 @@ export default function NavBarComponent(props) {
       </div>
 
       <div className="school">
-        <p>{props.Text}</p>
+        <p style={{marginRight: "10px"}}>{props.Text}</p>
         <LogOutButton />
       </div>
     </div>

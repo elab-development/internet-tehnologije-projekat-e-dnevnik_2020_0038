@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useStateContext } from "../contexts/ContextProvider";
+import NavBarComponent from "./NavBarComponent";
 
 export default function ProfessorLayout() {
   const { user, userType, token } = useStateContext();
@@ -17,6 +18,8 @@ export default function ProfessorLayout() {
 
   return (
     <div style={{ height: "100vh" }}>
+      <NavBarComponent Text={"Dobrodosli na sajt profesora"} />
+
       <Outlet />
     </div>
   );
