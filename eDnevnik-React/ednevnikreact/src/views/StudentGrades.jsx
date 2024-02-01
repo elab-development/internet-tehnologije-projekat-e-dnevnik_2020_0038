@@ -10,6 +10,9 @@ export default function StudentGrade() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [grades, setGrades] = useState([]);
+  const [filteredGrades, setFilteredGrades] = useState([]);
+  const [isFilterSet, setFilter] = useState(false);
+  const [selectedSubject, setSubject] = useState();
 
   useEffect(() => {
     async function fetchData() {
@@ -20,7 +23,7 @@ export default function StudentGrade() {
         const gradesData = subjectsData.map((subject) => ({
           SubjectName: subject.subject_name,
           Date: "20-09-2023",
-          Grade: 5,
+          Grade: Math.floor(Math.random() * (5 - 1 + 1)) + 1,
         }));
         setGrades(gradesData);
       } catch (error) {
@@ -31,6 +34,19 @@ export default function StudentGrade() {
 
     fetchData();
   }, []);
+
+
+  const filterGradesBySubject = (subjectName) => {
+    return grades.filter((grade) => grade.SubjectName === subjectName);
+  };
+
+  const handleSubjectClick = (subjectName) => {
+    const filteredGrades = filterGradesBySubject(subjectName);
+    setFilteredGrades(filteredGrades);
+    setFilter(true);
+    setSubject(subjectName);
+    console.log("Filtered Grades:", filteredGrades);
+  };
 
   if (loading) {
     return <p>Učitavanje...</p>;
@@ -50,12 +66,36 @@ export default function StudentGrade() {
               <SubjectsComponent
                 key={subject.id}
                 SubjectName={subject.subject_name}
+                onClick={() => handleSubjectClick(subject.subject_name)}
               />
             ))}
           </div>
         </div>
+        <div style={isFilterSet ? { display: "inline" } : { display: "none" }}>
+          <p style={{ marginLeft: "45px" }}>
+            Ocene iz predmeta {selectedSubject}:
+          </p>
+          <div className="grades" style={{ height: "350px" }}>
+            {filteredGrades.map((grade) => (
+              <GradeComponent
+                key={grade.id}
+                SubjectName={grade.SubjectName}
+                Date={grade.Date}
+                Grade={grade.Grade}
+              />
+            ))}
+          </div>
+          <button
+            onClick={() => {
+              setFilter(false);
+            }}
+            style={{marginLeft: "160px"}}
+          >
+            Ukloni filter
+          </button>
+        </div>
         <div>
-          <p style={{ marginLeft: "45px" }}>Ocene:</p>
+          <p style={{ marginLeft: "45px" }}>Spisak svih ocena:</p>
           <div className="grades">
             {grades.map((grade) => (
               <GradeComponent
