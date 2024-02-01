@@ -195,10 +195,12 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function (){
 
 Route::get('/typeOfGrades',[GradeTypeController::class,'index'])->middleware('isauth');
 
+Route::get('/schoolGrades/{school_grade_id}/subjects',[SchoolGradeController::class,'show']);
+
 Route::group(['middleware' => ['auth:sanctum', 'student']], function (){
 
     //radi - za odredjeni razred vraca sve predmete - svi mogu
-    Route::get('/schoolGrades/{school_grade_id}/subjects',[SchoolGradeController::class,'show']);
+    //Route::get('/schoolGrades/{school_grade_id}/subjects',[SchoolGradeController::class,'show']);
 
     //radi - prikaz svih tipova ocena - svi
     //Route::get('/typeOfGrades',[GradeTypeController::class,'index']);
