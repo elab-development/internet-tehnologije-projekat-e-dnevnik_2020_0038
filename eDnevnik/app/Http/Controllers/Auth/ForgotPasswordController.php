@@ -38,7 +38,7 @@ class ForgotPasswordController extends Controller
         $prom = true;
         switch($guard){
             case 'admin': 
-                $request->validate(['email' => 'required|email|exists:admins']);
+                $request->validate(['email' => 'required|email']);
                 break;
             case 'student_parent': 
                 $request->validate(['email' => 'required|email']);
@@ -47,7 +47,7 @@ class ForgotPasswordController extends Controller
                 $request->validate(['email' => 'required|email']);
                 break;
             case 'professor':
-                $request->validate(['email' => 'required|email|exists:professors']);
+                $request->validate(['email' => 'required|email']);
                 break;
             default:
                 $prom = false;

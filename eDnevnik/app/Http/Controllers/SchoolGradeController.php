@@ -86,12 +86,12 @@ class SchoolGradeController extends Controller
             'Name' => 'required|max:50'
         ];
 
-        $validator = Validator::make($data[0], $rules);
+        $validator = Validator::make($data, $rules);
         if($validator->fails()){
             //$grade= SchoolGrade::find($school_grade_id)->update(['name_of_school_grade' => $data[0]["Name"]]);
             return response()->json('Ime razreda mora da bude pravilno uneto', 404);
         }else{
-            $grade= SchoolGrade::find($school_grade_id)->update(['name_of_school_grade' => $data[0]["Name"]]);
+            $grade= SchoolGrade::find($school_grade_id)->update(['name_of_school_grade' => $data["Name"]]);
             return response()->json('Razred je uspesno azuriran', 200);
         }
     }

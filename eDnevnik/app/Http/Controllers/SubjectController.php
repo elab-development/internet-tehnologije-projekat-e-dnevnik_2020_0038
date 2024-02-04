@@ -101,14 +101,14 @@ class SubjectController extends Controller
             'SubjectName' => 'required|max:50'
         ];
 
-        $validator = Validator::make($data[0], $rules);
+        $validator = Validator::make($data, $rules);
         if($validator->fails()){
             return response()->json('Ime predmeta mora da bude uneto', 404);
         }else{
             //$request = json_decode($request->getContent(), true);
             //$subject->name_of_school_grade = $request[0]["SubjectName"];
 
-            $grade= Subject::find($subject_id)->update(['subject_name' => $data[0]["SubjectName"]]);
+            $grade= Subject::find($subject_id)->update(['subject_name' => $data["SubjectName"]]);
             return response()->json('Predmet je uspesno azuriran', 200);
         }
     }

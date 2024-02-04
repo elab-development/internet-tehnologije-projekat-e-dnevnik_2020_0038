@@ -1,7 +1,13 @@
 import BackButton from "../components/BackButton";
 import image from "../images/profilPer.jpg";
+import { useStateContext } from "../contexts/ContextProvider.jsx";
 
-export default function StudentProfile() {
+export default function StudentProfile(props) {
+  const { user, userType } = useStateContext();
+  let path = "/";
+  if (userType == "parent") {
+    path = "/student";
+  }
   return (
     <div>
       <div className="page profile">
@@ -15,7 +21,7 @@ export default function StudentProfile() {
           <p>Email roditelja: mikaperic@gmail.com</p>
         </div>
       </div>
-      <BackButton Path={"/"} />
+      <BackButton Path={path}/>
     </div>
   );
 }

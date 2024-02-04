@@ -97,7 +97,7 @@ class GradeTypeController extends Controller
         if($validator->fails()){
             return response()->json('Ime tipa ocene mora da bude uneto', 404);
         }else{
-            $grade= GradeType::find($grade_type_id)->update(['grade_type_name' => $data[0]["GradeType"]]);
+            $grade= GradeType::find($grade_type_id)->update(['grade_type_name' => $data["GradeType"]]);
             return response()->json('Tip ocene je uspesno azuriran', 200);
         }
     }

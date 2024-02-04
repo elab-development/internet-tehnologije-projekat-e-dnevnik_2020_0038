@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\GradeCollection;
 use App\Models\Grade;
+use Hamcrest\Core\IsInstanceOf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -119,6 +120,10 @@ class GradeController extends Controller
             $grade->date = $data["date"];
             $grade->grade_type_id = $data["grade_type_id"];
 
+            if($grade->grade_type_id == 1 && !is_string($grade->grade) ){
+                return response()->json('Za izabrani tip ocene morate da unesete tekstualnu vrednost. Ocena nije uneta', 404);
+            }
+
             $res = $grade->save();
             return $res ? response()->json('Ocena je uspesno uneta', 200) : response()->json('Ocena nije uneta', 404);
         }
@@ -214,9 +219,9 @@ class GradeController extends Controller
     {
         $data = json_decode($request->getContent(), true);
 
-        $date = $data[0]['date'];
-        $student = $data[0]['student_id'];
-        $subject = $data[0]['subject_id'];
+        $date = $data['date'];
+        $student = $data['student_id'];
+        $subject = $data['subject_id'];
         
         $res  = Grade::where('date', $date)
             ->where('subject_id', $subject)

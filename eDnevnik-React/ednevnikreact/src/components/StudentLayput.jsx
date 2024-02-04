@@ -15,7 +15,12 @@ export default function StudentLayout() {
   if (!token) {
     return <Navigate to="/" />;
   } else if (userType !== "student" && userType !== "parent") {
-    return <Navigate to="/professor/" />;
+    switch (userType) {
+      case "professor":
+        return <Navigate to="/professor/" />;
+      case "admin":
+        return <Navigate to="/admin/" />;
+    }
   }
 
   return (

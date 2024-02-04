@@ -56,18 +56,7 @@ Route::get('/reset-password/{token}', function (string $token) {
 })->middleware('guest')->name('password.reset');
 */
 
-
-Route::post('/registrujAdmina',[AuthControllerAdmin::class,'register']);
-
 Route::group(['middleware' => ['auth:sanctum', 'professor']], function (){
-
-    Route::get('/schoolGrades',[SchoolGradeController::class,'index']);
-
-    //radi - vraca odredjeni predmet -prof i admin
-    Route::get('/subjects/{subject_id}',[SubjectController::class,'show']);
-
-    //radi za odredjenig ucenika vraca roditelja njegovog
-    Route::get('/studentParents/{student_id}',[StudentParentController::class,'getParent']);
 
     //radi - odredjeni profesor moze da unese ocenu za odredjenog studenta - proesor
     Route::post('/professors/{professor_id}/grades', [GradeController::class,'store']);
@@ -81,7 +70,6 @@ Route::group(['middleware' => ['auth:sanctum', 'professor']], function (){
     //radi - vraca sve predmete koje predaje profesor
     Route::get('/professors/{professor_id}/subjects', [SubjectController::class,'getAllSubjects']);
 
-    //msm da nema potrebe za profesorom ovde jer on je svakako pre toga ulogovan pa ima proikaz svih svojih predmeta pa samo izabere - profesor
     //radi - vraca sve ucenike za odredjeni predmet (ide po razredu)
     Route::get('/subjects/{subject_id}/students', [StudentController::class,'getAllStudentsForSubject']);
 
@@ -89,7 +77,7 @@ Route::group(['middleware' => ['auth:sanctum', 'professor']], function (){
     Route::post('/students/{student_id}/grades',[GradeController::class,'update']);
 
     //radi - brise odredjenu ocenu
-    Route::post('/professors/{professor_id}/deleteGrades', [GradeController::class,'destroy']);
+    Route::delete('/professors/{professor_id}/deleteGrades', [GradeController::class,'destroy']);
 
     //radi - prikaz odredjenog ucenika - kao njegov profil svi
     Route::get('/studentsProfile/{student_id}',[StudentController::class,'show']);
@@ -99,62 +87,68 @@ Route::group(['middleware' => ['auth:sanctum', 'professor']], function (){
 
 Route::group(['middleware' => ['auth:sanctum', 'admin']], function (){
 
-    //roditelj
-    Route::post('/registrujRoditelja',[AuthControllerStudentParent::class,'register']);//admin ali je isto kao i store
+    //radi - vraca odredjeni predmet
+    Route::get('/subjects/{subject_id}',[SubjectController::class,'show']);
+
+    //radi - registracija novog admina
+    Route::post('/registrujAdmina',[AuthControllerAdmin::class,'register']);//napisana
+
+    //roditelj - bez dece
+    //Route::post('/registrujRoditelja',[AuthControllerStudentParent::class,'register']);//admin ali je isto kao i store
 
     //ucenik
-    Route::post('/registrujUcenika',[AuthControllerStudent::class,'register']);//isto kao store i admin ce da radi
+    //Route::post('/registrujUcenika',[AuthControllerStudent::class,'register']);//isto kao store i admin ce da radi
 
     //profesor
-    Route::post('/registrujProfesora',[AuthControllerProfessor::class,'register']);//isto kao store i admin ce da radi
+    //Route::post('/registrujProfesora',[AuthControllerProfessor::class,'register']);//isto kao store i admin ce da radi
 
     //admin
     //Route::post('/registrujAdmina',[AuthControllerAdmin::class,'register']);//isto kao store i admin ce da radi
 
     //radi - unos novog razreda
-    Route::post('/schoolGrades',[SchoolGradeController::class, 'store']);
+    Route::post('/schoolGrades',[SchoolGradeController::class, 'store']);//napisana
 
-    //radi - brisanje predmeta
-    Route::delete('/schoolGrades/{school_grade_id}',[SchoolGradeController::class, 'destroy']);
+    //radi - brisanje razreda
+    Route::delete('/schoolGrades/{school_grade_id}',[SchoolGradeController::class, 'destroy']);//napisana
 
     //radi - azuriranje ime razreda
-    Route::put('/schoolGrades/{school_grade_id}', [SchoolGradeController::class, 'update']);
+    Route::put('/schoolGrades/{school_grade_id}', [SchoolGradeController::class, 'update']);//napisana
 
     //radi - vraca sve predmete
-    Route::resource('/subjects',SubjectController::class);
+    Route::resource('/subjects',SubjectController::class);//napisana
 
     //radi - azuriranje predmeta
-    Route::put('/subjects/{subject_id}',[SubjectController::class,'update']);
+    Route::put('/subjects/{subject_id}',[SubjectController::class,'update']);//napisana
 
-    //radi - dodavanje novog predmeta odredjenom razredu
-    Route::post('/schoolGrades/{school_grade_id}/subjects', [SubjectController::class,'store']);
+    //radi - dodavanje novog predmeta odredjenom razredu za odredjenog prof
+    Route::post('/schoolGrades/{school_grade_id}/subjects', [SubjectController::class,'stosre']);//napisana
 
     //radi - brisanje predmeta
-    Route::delete('/subjects/{subject_id}', [SubjectController::class,'destroy']);
+    Route::delete('/subjects/{subject_id}', [SubjectController::class,'destroy']);//napisana
 
     //radi - prikaz odredjenog tipa
-    Route::get('/typeOfGrades/{type_of_grade_id}',[GradeTypeController::class,'show']);
+    Route::get('/typeOfGrades/{type_of_grade_id}',[GradeTypeController::class,'show']);//napisana
 
     //radi - azuriranje odredjenog tipa
-    Route::put('/typeOfGrades/{type_of_grade_id}',[GradeTypeController::class,'update']);
+    Route::put('/typeOfGrades/{type_of_grade_id}',[GradeTypeController::class,'update']);//napisana
 
     //radi - dodaje novi tip ocene
-    //Route::post('/typeOfGrades', [GradeTypeController::class,'store']);
+    Route::post('/typeOfGrades', [GradeTypeController::class,'store']);//napisana
 
     //radi - brisanje odredjenog tipa
-    Route::delete('/typeOfGrades/{type_of_grade_id}', [GradeTypeController::class,'destroy']);
+    Route::delete('/typeOfGrades/{type_of_grade_id}', [GradeTypeController::class,'destroy']);//napisana
 
     //radi - prikaz svih profesora
-    Route::get('/professors',[ProfessorController::class,'index']);
+    Route::get('/professors',[ProfessorController::class,'index']);//napisana
 
     //radi - prikaz odredjenog profesora
     Route::get('/professors/{professor_id}',[ProfessorController::class,'show']);
 
     //radi - azuriranje imena profeosra
-    Route::put('/professors/{professor_id}',[ProfessorController::class,'update']);
+    Route::put('/professors/{professor_id}',[ProfessorController::class,'update']);//napisana
 
     //radi - unos novog profesora
-    Route::post('/professors', [ProfessorController::class,'store']);
+    Route::post('/professors', [ProfessorController::class,'store']);//napisana
 
     //radi - brisanje odredjenog profesora
     Route::delete('/professors/{professor_id}', [ProfessorController::class,'destroy']);
@@ -171,7 +165,7 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function (){
     //radi - dodaje novog roditelja bez dece
     Route::post('/parents', [StudentParentController::class,'store']);
 
-    //radi donekle - brise roditelje cak iako imaju decu (u migraciji nije dodao kao foreignId?)
+    //radi donekle - brise roditelja
     Route::delete('/parents/{parent_id}', [StudentParentController::class,'destroy']);
 
     //radi - prikaz svih ucenika
@@ -181,35 +175,32 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function (){
     Route::post('/parents/{parent_id}/students', [StudentController::class,'store']);
 
     //radi - azuriranje imena ucenika
-    Route::put('/students/{student_id}',[StudentController::class,'update']);
+    Route::put('/students/{student_id}',[StudentController::class,'update']); //napisana
 
     //radi - brisanje odredjenog studenta
-    Route::delete('/students/{student_id}', [StudentController::class,'destroy']);
+    Route::delete('/students/{student_id}', [StudentController::class,'destroy']); //napisana
 
     //radi - prikaz svih ocena
-    Route::resource('/grades',GradeController::class);
+    Route::resource('/grades',GradeController::class);//napisana
 
-    //nece da radi vrv jer ima dupla ruta
-    Route::get('/schoolGrades',[SchoolGradeController::class,'index']);
+    //radi - prikaz svih razreda
+    Route::get('/schoolGrades',[SchoolGradeController::class,'index']); //napisana
 });
+
+//ako necemu mogu svi da pristupe onda neka bude isauth
 
 Route::get('/typeOfGrades',[GradeTypeController::class,'index'])->middleware('isauth');
 
+//radi - vraca za odredjenog ucenika i za odredjeni predmet ocene sve -svi
+Route::get('/students/{student_id}/subjects/{subject_id}/grades',[GradeController::class,'getGradesForStudent'])->middleware('isauth');
+
+//mora ovako da bude zbog reacta ali inace isauth - za odredjeni razred vraca sve predmete
 Route::get('/schoolGrades/{school_grade_id}/subjects',[SchoolGradeController::class,'show']);
 
 Route::group(['middleware' => ['auth:sanctum', 'student']], function (){
 
-    //radi - za odredjeni razred vraca sve predmete - svi mogu
-    //Route::get('/schoolGrades/{school_grade_id}/subjects',[SchoolGradeController::class,'show']);
-
-    //radi - prikaz svih tipova ocena - svi
-    //Route::get('/typeOfGrades',[GradeTypeController::class,'index']);
-
     //radi - prikaz odredjenog ucenika - kao njegov profil svi
     Route::get('/students/{student_id}',[StudentController::class,'show']);
-
-    //radi - vraca za odredjenog ucenika i za odredjeni predmet ocene sve -svi
-    Route::get('/students/{student_id}/subjects/{subject_id}/grades',[GradeController::class,'getGradesForStudent']);
 
     //radi - vraca za odredjenog ucenika izabrani tip svih ocena - svi
     Route::get('/students/{student_id}/grades/{grade_type_id}',[GradeController::class,'getGradesTypesForStudent']);
@@ -221,34 +212,23 @@ Route::group(['middleware' => ['auth:sanctum', 'student']], function (){
     Route::get('/students/{student_id}/grades',[GradeController::class,'show']);
 });
 
+Route::post('/loginRoditelja',[AuthControllerStudentParent::class,'login']);
 
-//
-/*{
-    "email": "tanjaKilibarda@gmail.com",
-    "password": "tanja123"
-}*/
-        Route::post('/loginRoditelja',[AuthControllerStudentParent::class,'login']);
+Route::post('/loginUcenika',[AuthControllerStudent::class,'login']);
 
-        Route::post('/loginUcenika',[AuthControllerStudent::class,'login']);
+Route::post('/loginProfesora',[AuthControllerProfessor::class,'login']);
 
-        Route::post('/loginProfesora',[AuthControllerProfessor::class,'login']);
+Route::post('/loginAdmina',[AuthControllerAdmin::class,'login']);
 
-        Route::post('/loginAdmina',[AuthControllerAdmin::class,'login']);
+Route::group(['middleware' => ['auth:sanctum']],function (){
 
-    Route::group(['middleware' => ['auth:sanctum']],function (){
-        Route::middleware('student_parent')->get('studentParent/{parent_id}/students', [StudentController::class, 'getChildren']);
+    Route::middleware('student_parent')->get('studentParent/{parent_id}/students', [StudentController::class, 'getChildren']);
 
-        Route::middleware('student')->post('/logoutUcenika',[AuthControllerStudent::class,'logout']);
+    Route::middleware('student')->post('/logoutUcenika',[AuthControllerStudent::class,'logout']);
 
-        Route::middleware('student')->post('/logoutRoditelja',[AuthControllerStudentParent::class,'logout']);
+    Route::middleware('student')->post('/logoutRoditelja',[AuthControllerStudentParent::class,'logout']);
 
-        Route::middleware('professor')->post('/logoutProfesora',[AuthControllerProfessor::class,'logout']);
+    Route::middleware('professor')->post('/logoutProfesora',[AuthControllerProfessor::class,'logout']);
 
-        Route::middleware('admin')->post('/logoutAdmina',[AuthControllerAdmin::class,'logout']);
-
-        
-    });
-/*"name_surname":"Pera Peric",
-    "email":"peraPera@gmail.com",
-    "password": "perapera123"*/
-//TODO: Vidi kod update da li da se meneja i email
+    Route::middleware('admin')->post('/logoutAdmina',[AuthControllerAdmin::class,'logout']);
+});

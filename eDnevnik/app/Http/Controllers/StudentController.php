@@ -35,7 +35,7 @@ class StudentController extends Controller
         //mozda join fja da probas
         $subject = Subject::where('id',$subject_id)->first();
         $schoolGrade = SchoolGrade::where('id', $subject->school_grade_id)->first();
-        $students = Student::where('school_grades_id', $schoolGrade->id)->get();
+        $students = Student::where('school_grade_id', $schoolGrade->id)->get();
         return new StudentCollection($students);
     }
 

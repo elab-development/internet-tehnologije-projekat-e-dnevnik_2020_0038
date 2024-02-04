@@ -7,7 +7,7 @@ export default function ProfessorLayout() {
 
   if (!token) {
     return <Navigate to="/" />;
-  } else if (userType !== "professor") {
+  } else if (userType !== "professor" && userType !== "admin") {
     switch (userType) {
       case "student":
         return <Navigate to="/student/" />;

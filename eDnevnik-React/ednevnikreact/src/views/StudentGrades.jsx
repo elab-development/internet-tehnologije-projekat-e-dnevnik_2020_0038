@@ -4,8 +4,10 @@ import GradeComponent from "./GradeComponent.jsx";
 import React, { useState, useEffect } from "react";
 import { getSubjects } from "../service/services.tsx";
 import { Subject } from "../service/model.tsx";
+import { useStateContext } from "../contexts/ContextProvider.jsx";
 
 export default function StudentGrade() {
+    const { user, userType } = useStateContext();
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,6 +15,14 @@ export default function StudentGrade() {
   const [filteredGrades, setFilteredGrades] = useState([]);
   const [isFilterSet, setFilter] = useState(false);
   const [selectedSubject, setSubject] = useState();
+  const [isSetGradeType, setGradeType] = useState(false);
+
+  const tipovi = [
+    "Aktivnost",
+    "Ocena",
+    "Ocena na polugodistu",
+    "Zakljucna ocena",
+  ];
 
   useEffect(() => {
     async function fetchData() {
@@ -56,6 +66,11 @@ export default function StudentGrade() {
     return <p>{error}</p>;
   }
 
+  let path = "/";
+  if(userType == "parent"){
+    path = "/student";
+  }
+
   return (
     <div>
       <div className="page">
@@ -72,7 +87,27 @@ export default function StudentGrade() {
           </div>
         </div>
         <div style={isFilterSet ? { display: "inline" } : { display: "none" }}>
-          <p style={{ marginLeft: "45px" }}>
+          <p style={{ marginLeft: "45px", marginBottom: "5px" }} id="tipOcene">
+            Izaberite tip ocene iz predmeta {selectedSubject}:
+          </p>
+          <select
+            name="gradeType"
+            id="tipOcene"
+            style={{ marginBottom: "0px", marginLeft: "45px" }}
+          >
+            {tipovi.map((tip, index) => (
+              <option key={index} value={tip}>
+                {tip}
+              </option>
+            ))}
+          </select>
+          <p
+            style={{
+              marginLeft: "45px",
+              marginTop: "5px",
+              marginBottom: "5px",
+            }}
+          >
             Ocene iz predmeta {selectedSubject}:
           </p>
           <div className="grades" style={{ height: "350px" }}>
@@ -88,15 +123,30 @@ export default function StudentGrade() {
           <button
             onClick={() => {
               setFilter(false);
+              setGradeType(false);
             }}
-            style={{marginLeft: "160px"}}
+            style={{ marginLeft: "160px" }}
           >
             Ukloni filter
           </button>
         </div>
         <div>
+          <p style={{ marginLeft: "45px", marginBottom: "5px" }} id="tipOcene">
+            Izaberite tip za sve ocene:
+          </p>
+          <select
+            name="gradeType"
+            id="tipOcene"
+            style={{ marginBottom: "0px", marginLeft: "45px" }}
+          >
+            {tipovi.map((tip, index) => (
+              <option key={index} value={tip}>
+                {tip}
+              </option>
+            ))}
+          </select>
           <p style={{ marginLeft: "45px" }}>Spisak svih ocena:</p>
-          <div className="grades">
+          <div className="grades" style={{ height: "420px" }}>
             {grades.map((grade) => (
               <GradeComponent
                 key={grade.id}
@@ -108,7 +158,7 @@ export default function StudentGrade() {
           </div>
         </div>
       </div>
-      <BackButton Path={"/"} />
+      <BackButton Path={path} />
     </div>
   );
 }

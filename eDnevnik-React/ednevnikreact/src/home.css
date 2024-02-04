@@ -51,7 +51,12 @@ button {
     font-size: medium;
 }
 
-
+#name_surname{
+    border-radius: .5em;
+    border: none;
+    height: 25px;
+    font-size: medium;
+}
 
 #password{
     margin-bottom: 15px; 
@@ -69,13 +74,39 @@ button {
     width: 50%;
 }
 
+.formSub{
+    background-color: #b0dbcf;
+    border-radius: 1em;
+    width: 400px;
+    height: 340px;
+    margin-left: 70px;
+    margin-top: 70px
+}
+
+.usable{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.adminspec{
+    margin-left: 70px; 
+    margin-top: 70px 
+}
+.nesto{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
 .big{
     /*#add8e6*/
-    background-color: #a4ecd8;
+    background-color: #b0dbcf;
     width: 700px;
     height: 450px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     border-radius: 1em;
@@ -234,4 +265,8 @@ button {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+#buttonZaboravljenaLoz{
+    background-color: #bbd8d0;
 }

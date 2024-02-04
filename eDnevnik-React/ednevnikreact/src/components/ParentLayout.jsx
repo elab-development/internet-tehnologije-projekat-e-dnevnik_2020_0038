@@ -13,6 +13,8 @@ export default function ParentLayout() {
         return <Navigate to="/student/" />;
       case "professor":
         return <Navigate to="/professor/" />;
+      case "admin":
+        return <Navigate to="/admin/" />;
     }
   }
 

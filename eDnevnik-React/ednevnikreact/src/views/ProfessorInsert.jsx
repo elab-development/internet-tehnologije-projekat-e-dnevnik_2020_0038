@@ -3,6 +3,7 @@ import SubjectsComponent from "../components/SubjectsComponent.jsx";
 import BackButton from "../components/BackButton.jsx";
 import StudentComponent from "../components/StudentComponent.jsx";
 import React, { useState, useEffect } from "react";
+import { useStateContext } from "../contexts/ContextProvider.jsx";
 
 export default function ProfessorInsert() {
   const number = 4;
@@ -69,6 +70,12 @@ export default function ProfessorInsert() {
     
     console.log(`Izabran predmet: ${selectedSubject}`);
   }, [selectedStudent]);
+
+  const { user, userType } = useStateContext();
+  let path = "/";
+  if (userType == "admin") {
+    path = "/professor";
+  }
   return (
     <div>
       <div className="page" style={{ marginTop: "25px" }}>
@@ -137,7 +144,7 @@ export default function ProfessorInsert() {
           </div>
         </div>
       </div>
-      <BackButton Path={"/"} />
+      <BackButton Path={path} />
     </div>
   );
 }

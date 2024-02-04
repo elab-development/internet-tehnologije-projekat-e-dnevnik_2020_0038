@@ -15,11 +15,11 @@ export default function StudentHome() {
   return (
     <div>
       <div className="containers" style={{ margin: "55px" }}>
-        <Link to="grade">
+        <Link to="grade" style={{ textDecoration: "none", color: "black" }}>
           <ContainerComponent Text={"Ocene"} Image={"ocene"} />
         </Link>
 
-        <Link to="profile">
+        <Link to="profile" style={{ textDecoration: "none", color: "black" }}>
           <ContainerComponent Text={"Profil"} Image={"profil"} />
         </Link>
       </div>

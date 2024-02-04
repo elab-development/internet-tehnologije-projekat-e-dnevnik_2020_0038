@@ -35,6 +35,9 @@ function Home() {
         <Link to="/login" onClick={() => handleUserTypeSelection("professor")}>
           <button id="button3">Profesor</button>
         </Link>
+        <Link to="/login" onClick={() => handleUserTypeSelection("admin")}>
+          <button id="button3">Admin</button>
+        </Link>
       </div>
     </div>
   );

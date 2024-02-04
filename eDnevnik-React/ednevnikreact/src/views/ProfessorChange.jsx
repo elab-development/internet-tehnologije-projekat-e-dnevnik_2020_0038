@@ -3,6 +3,7 @@ import SubjectsComponent from "../components/SubjectsComponent.jsx";
 import BackButton from "../components/BackButton.jsx";
 import StudentComponent from "../components/StudentComponent.jsx";
 import React, { useState, useEffect } from "react";
+import { useStateContext } from "../contexts/ContextProvider.jsx";
 
 export default function ProfessorChange() {
   const number = 4;
@@ -85,6 +86,12 @@ export default function ProfessorChange() {
     console.log(`Izabrana ocena: ${selectedSubject}`);
     setInputValue(selectedGrade ? selectedGrade.props.Grade : "");
   }, [selectedGrade]);
+
+  const { user, userType } = useStateContext();
+  let path = "/";
+  if (userType == "admin") {
+    path = "/professor";
+  }
   return (
     <div>
       <div className="page" style={{ marginTop: "25px" }}>
@@ -167,7 +174,7 @@ export default function ProfessorChange() {
           </div>
         </div>
       </div>
-      <BackButton Path={"/"} />
+      <BackButton Path={path} />
     </div>
   );
 }

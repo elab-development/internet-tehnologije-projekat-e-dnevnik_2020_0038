@@ -8,6 +8,7 @@ const StateContext = createContext({
   setToken: () => {},
   setUserType: () => {},
   logout: () => {},
+  setUserAndType: () => {}
 });
 
 

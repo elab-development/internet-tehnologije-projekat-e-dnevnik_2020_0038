@@ -6,17 +6,17 @@ export default function ParentHome() {
   return (
     <div className="page">
       <div className="students">
-        <Link to="/student/">
+        <Link to="/student/" style={{ textDecoration: "none", color: "black" }}>
           <StudentComponent
             style={{ textDecoration: "none" }}
             Name={"Pera Peric"}
           />
         </Link>
 
-        <Link to="/student/">
+        <Link to="/student/" style={{ textDecoration: "none", color: "black" }}>
           <StudentComponent Name={"Zika Peric"} />
         </Link>
-        <Link to="/student/">
+        <Link to="/student/" style={{ textDecoration: "none", color: "black" }}>
           <StudentComponent Name={"Mika Peric"} />
         </Link>
       </div>

@@ -13,6 +13,8 @@ export default function GuestLayout() {
         return <Navigate to="/professor/" />;
       case "parent":
         return <Navigate to="/parent/" />;
+      case "admin":
+        return <Navigate to="/admin/" />;
     }
   }
   return (
