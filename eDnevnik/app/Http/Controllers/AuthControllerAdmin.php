@@ -67,7 +67,7 @@ class AuthControllerAdmin extends Controller
             return response()->json([
             'success' => 'Uspesno ste se ulogovali',
             'data' => $parent,
-            'auth_token' => $token,
+            'token' => $token,
             ], 200);
         }
         //return redirect()->route('')->with('success', 'Uspesno ste se ulogovali');

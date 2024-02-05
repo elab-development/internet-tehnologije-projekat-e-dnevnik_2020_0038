@@ -16,9 +16,20 @@ export default function ProfessorLayout() {
     }
   }
 
+  let name = "cao";
+  if (user) {
+    debugger;
+    const allAttributes = Object.keys(user || {}).map((key) => ({
+      key: key,
+      value: user[key],
+    }));
+
+    name = allAttributes.find((attribute) => attribute.key === "name_surname");
+  }
+
   return (
     <div style={{ height: "100vh" }}>
-      <NavBarComponent Text={"Dobrodosli na sajt profesora"} />
+      <NavBarComponent Text={"Dobrodosli " + name.value} />
 
       <Outlet />
     </div>

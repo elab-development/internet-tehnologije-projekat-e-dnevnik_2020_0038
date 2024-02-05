@@ -8,12 +8,11 @@ const StateContext = createContext({
   setToken: () => {},
   setUserType: () => {},
   logout: () => {},
-  setUserAndType: () => {}
 });
 
 
 export const ContextProvider = ({children})  =>{
-  const [user, setUser] = useState({});
+  const [user, _setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [token, _setToken] = useState(localStorage.getItem("ACCESS_TOKEN")); //localStorage.getItem("ACCESS_TOKEN")
   const [userType, _setUserType] = useState(localStorage.getItem("userType"));
 
@@ -27,10 +26,27 @@ export const ContextProvider = ({children})  =>{
     }
   };
 
-  const setUserAndType = (userData, type) => {
-    setUser(userData);
-    _setUserType(type);
-    localStorage.setItem("userType", type);
+
+
+  // const setUser = (userData) => {
+  //   _setUser(userData);
+  //   debugger;
+  //   if (userData) {
+  //     localStorage.setItem("user", userData);
+  //   } else {
+  //     localStorage.removeItem("user");
+  //   }
+  // };const setUser = (userData) => {
+ 
+
+  const setUser = (userData) => {
+    _setUser(userData);
+    debugger;
+    if (userData) {
+      localStorage.setItem("user", JSON.stringify(userData, null, 2)); 
+    } else {
+      localStorage.removeItem("user");
+    }
   };
 
   const setUserType = (type) => {
@@ -43,7 +59,7 @@ export const ContextProvider = ({children})  =>{
   };
 
   const logout = () => {
-    setUser({});
+    setUser(null);
     setToken(null);
     setUserType("");
   };
@@ -54,7 +70,7 @@ export const ContextProvider = ({children})  =>{
         user,
         token,
         userType,
-        setUser: setUserAndType,
+        setUser,
         setToken,
         setUserType,
         logout

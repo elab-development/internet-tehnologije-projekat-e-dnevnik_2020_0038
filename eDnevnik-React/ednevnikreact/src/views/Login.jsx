@@ -2,20 +2,18 @@ import person from "../images/person.jpg";
 import { useStateContext } from "../contexts/ContextProvider";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { login } from "../service/services.tsx";
+import axios from "axios";
 
 export default function Login() {
-  const { userType, setToken, setUserType } = useStateContext();
+  const { user, userType, setUser ,setToken, setUserType } = useStateContext();
   const [error, setError] = useState();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   let type;
 
-  const storedUserType = localStorage.getItem("userType");
-  //if (typeof storedUserType === "undefined" || storedUserType === null) {
-  // Ako tip korisnika nije definisan, preusmeri korisnika na početnu stranicu
-  //return <Navigate to="/" />;
-  //}
   switch (userType) {
     case "student":
       type = "Ucenik";
@@ -39,24 +37,7 @@ export default function Login() {
     return navigate("/resetLozinka");
   }
 
-  const login = async () => {
-    try {
-      const response = await axios.post('http://localhost:8000/api/login', {
-        email,
-        password
-      });
-      
-      console.log(response.data);
-    } catch (error) {
-      // Obrada greške (npr. prikazivanje poruke o grešci)
-      console.error(error.response.data);
-    }
-
-
-
-
-
-  const sendTo = (event) => {
+  const sendTo = async (event) => {
     event.preventDefault();
     debugger;
     const email = document.getElementById("email").value;
@@ -78,29 +59,95 @@ export default function Login() {
       return;
     }
 
-    debugger;
-    setToken(123);
+    let path;
     switch (userType) {
       case "student":
-        navigate("/student/");
+        path = "Ucenika";
         break;
       case "professor":
-        navigate("/professor/");
+        path = "Profesora";
         break;
       case "parent":
-        navigate("/parent/");
+        path = "Roditelja";
         break;
       case "admin":
-        navigate("/admin/");
+        path = "Admina";
         break;
       default:
         navigate("/");
         break;
+
     }
+    try {
+      
+      setLoading(true);
+
+      const { data, token } = await login(path, email, password);
+
+      if (!data) {
+        setError("Ne postoji korisnik sa unetim podacima.");
+        setLoading(false);
+        return;
+      }
+
+      debugger;
+      setToken(token);
+      setUser(data);
+
+      setLoading(false);
+      debugger;
+      //setToken(123);
+      // switch (userType) {
+      //   case "student":
+      //     navigate("/student/");
+      //     break;
+      //   case "professor":
+      //     navigate("/professor/");
+      //     break;
+      //   case "parent":
+      //     navigate("/parent/");
+      //     break;
+      //   case "admin":
+      //     navigate("/admin/");
+      //     break;
+      //   default:
+      //     navigate("/");
+      //     break;
+      // }
+    }catch(error) {
+        console.error(error);
+        setError("Greška prilikom prijave.");
+        setLoading(false);
+      }
   };
+
+  useEffect(() => {
+    debugger;
+    if (userType && user) {
+      switch (userType) {
+        case "student":
+          navigate("/student/");
+          break;
+        case "professor":
+          navigate("/professor/");
+          break;
+        case "parent":
+          navigate("/parent/");
+          break;
+        case "admin":
+          navigate("/admin/");
+          break;
+        default:
+          navigate("/");
+          break;
+      }
+    }
+  }, [userType, user, navigate]);
 
   return (
     <div className="homeLogin log">
+      <p style={loading ? { visibility: "visible" }
+              : { visibility: "hidden" }}>Provera...</p>
       <div className="big">
         <p>{error}</p>
         <div className="nesto">
@@ -114,7 +161,7 @@ export default function Login() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                login();
+                sendTo(e);
               }}
               className="logInArg"
             >
@@ -128,8 +175,8 @@ export default function Login() {
                 <input type="password" id="password" />
               </div>
 
-              <button id="button5" onClick={(e) => sendTo(e)}>
-                Uloguj se
+              <button id="button5" disabled={loading}>
+                {loading ? "Učitavanje..." : "Uloguj se"}
               </button>
               <button
                 id="buttonZaboravljenaLoz"
@@ -145,3 +192,4 @@ export default function Login() {
     </div>
   );
 }
+

@@ -46,3 +46,9 @@ export interface Grade {
   gradeType: GradeType;
   professor: Professor;
 }
+
+export interface Admin {
+  id: number;
+  email: string;
+  password: string;
+}
