@@ -48,7 +48,6 @@ Route::get('/zaboravljenaLoznika/{token}', function (string $token) {
 
 Route::post('/resetLozinka/reset',[ForgotPasswordController::class,'reset'])->name('password.update')->middleware('guest');
 
-Route::get('generate-pdf/{student_id}', [PDFController::class, 'generatePDF']);
 
 /* Laravel docs
 Route::get('/reset-password/{token}', function (string $token) {
@@ -194,8 +193,8 @@ Route::get('/typeOfGrades',[GradeTypeController::class,'index'])->middleware('is
 //radi - vraca za odredjenog ucenika i za odredjeni predmet ocene sve -svi
 Route::get('/students/{student_id}/subjects/{subject_id}/grades',[GradeController::class,'getGradesForStudent'])->middleware('isauth');
 
-//mora ovako da bude zbog reacta ali inace isauth - za odredjeni razred vraca sve predmete
-Route::get('/schoolGrades/{school_grade_id}/subjects',[SchoolGradeController::class,'show']);
+//radi - za odredjeni razred vraca sve predmete
+Route::get('/schoolGrades/{school_grade_id}/subjects',[SchoolGradeController::class,'show'])->middleware('isauth');;
 
 Route::group(['middleware' => ['auth:sanctum', 'student']], function (){
 
@@ -210,6 +209,8 @@ Route::group(['middleware' => ['auth:sanctum', 'student']], function (){
 
     //radi - vraca spisak ocena za odredjenog studenta - svi
     Route::get('/students/{student_id}/grades',[GradeController::class,'show']);
+
+    Route::get('generate-pdf/{student_id}', [PDFController::class, 'generatePDF']);
 });
 
 Route::post('/loginRoditelja',[AuthControllerStudentParent::class,'login']);

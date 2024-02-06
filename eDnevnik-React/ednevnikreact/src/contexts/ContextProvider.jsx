@@ -4,7 +4,9 @@ const StateContext = createContext({
   user: null,
   token: null,
   userType: "",
+  storedHelper: null,
   setUser: () => {},
+  setstoredHelper: () => {},
   setToken: () => {},
   setUserType: () => {},
   logout: () => {},
@@ -15,6 +17,9 @@ export const ContextProvider = ({children})  =>{
   const [user, _setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [token, _setToken] = useState(localStorage.getItem("ACCESS_TOKEN")); //localStorage.getItem("ACCESS_TOKEN")
   const [userType, _setUserType] = useState(localStorage.getItem("userType"));
+  const [storedHelper, _setstoredHelper] = useState(
+    JSON.parse(localStorage.getItem("storedHelper"))
+  );
 
   const setToken = (token) => {
     _setToken(token);
@@ -25,20 +30,7 @@ export const ContextProvider = ({children})  =>{
       localStorage.removeItem("ACCESS_TOKEN");
     }
   };
-
-
-
-  // const setUser = (userData) => {
-  //   _setUser(userData);
-  //   debugger;
-  //   if (userData) {
-  //     localStorage.setItem("user", userData);
-  //   } else {
-  //     localStorage.removeItem("user");
-  //   }
-  // };const setUser = (userData) => {
  
-
   const setUser = (userData) => {
     _setUser(userData);
     debugger;
@@ -46,6 +38,16 @@ export const ContextProvider = ({children})  =>{
       localStorage.setItem("user", JSON.stringify(userData, null, 2)); 
     } else {
       localStorage.removeItem("user");
+    }
+  };
+
+  const setstoredHelper = (userData) => {
+    _setstoredHelper(userData);
+    debugger;
+    if (userData) {
+      localStorage.setItem("storedHelper", JSON.stringify(userData, null, 2));
+    } else {
+      localStorage.removeItem("storedHelper");
     }
   };
 
@@ -61,6 +63,7 @@ export const ContextProvider = ({children})  =>{
   const logout = () => {
     setUser(null);
     setToken(null);
+    setstoredHelper(null);
     setUserType("");
   };
 
@@ -68,9 +71,11 @@ export const ContextProvider = ({children})  =>{
     <StateContext.Provider
       value={{
         user,
+        storedHelper,
         token,
         userType,
         setUser,
+        setstoredHelper,
         setToken,
         setUserType,
         logout

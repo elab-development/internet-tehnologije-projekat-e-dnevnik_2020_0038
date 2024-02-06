@@ -24,6 +24,7 @@ export  interface Student {
   email: string;
   password: string;
   parent: StudentParent;
+  schoolgrade: SchoolGrade;
 }
 
 export  interface Subject {

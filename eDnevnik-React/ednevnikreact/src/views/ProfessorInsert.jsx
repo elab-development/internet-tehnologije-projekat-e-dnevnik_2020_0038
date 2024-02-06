@@ -4,74 +4,130 @@ import BackButton from "../components/BackButton.jsx";
 import StudentComponent from "../components/StudentComponent.jsx";
 import React, { useState, useEffect } from "react";
 import { useStateContext } from "../contexts/ContextProvider.jsx";
+import { getGradeType, getGradesForStudent, getGradesForStudentForSubject, getStudentsForSubject, getSubjects, getSubjectsForProfessor } from "../service/services.tsx";
 
 export default function ProfessorInsert() {
-  const number = 4;
-  const subjects = [];
-  const names = [
-    "Matematika prvi razred",
-    "Matematika drugi razred",
-    "Matematika treci razred",
-    "Matematika cetvrti razred",
-  ];
-
-  const tipovi = ["Aktivnost", "Ocena", "Ocena na polugodistu","Zakljucna ocena"];
-  const numberOfRows = tipovi.length;
-
+  const { user, userType, token, storedHelper } = useStateContext();
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [subjects, setSubjects] = useState(null);
+  const [tipovi, setgradeTypes] = useState(null);
+  const [grades, setGrades] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [students, setStudents] = useState([]);
 
-  for (let index = 0; index < number; index++) {
-    subjects.push(<SubjectsComponent SubjectName={names[index]} />);
-  }
+  // const number = 4;
+  // //const subjects = [];
+  // const names = [
+  //   "Matematika prvi razred",
+  //   "Matematika drugi razred",
+  //   "Matematika treci razred",
+  //   "Matematika cetvrti razred",
+  // ];
 
-  const grades = [];
-  const grnames = [
-    "Matematika",
-    "Fizika",
-    "Biologija",
-    "Geografija",
-    "Istorija",
-    "Fizicko",
-  ];
+  // //const tipovi = ["Aktivnost", "Ocena", "Ocena na polugodistu","Zakljucna ocena"];
+  // const numberOfRows = tipovi.length;
 
-  for (let index = 0; index < number; index++) {
-    grades.push(
-      <GradeComponent
-        SubjectName={names[index]}
-        Date={"20-09-2023"}
-        Grade={5}
-      />
-    );
-  }
+  // for (let index = 0; index < number; index++) {
+  //   subjects.push(<SubjectsComponent SubjectName={names[index]} />);
+  // }
 
-  const students = [];
-  const studentName = ["Mika Mikic", "Pera Peric", "Zika Zikic", "Zika Peric", "Mika Peric"];
-  for (let index = 0; index < studentName.length + 1; index++) {
-    students.push(<StudentComponent Name={studentName[index]} />);
-  }
-  let index = 0;
-  let stud = 0;
+  // const grades = [];
+  // const grnames = [
+  //   "Matematika",
+  //   "Fizika",
+  //   "Biologija",
+  //   "Geografija",
+  //   "Istorija",
+  //   "Fizicko",
+  // ];
+
+  // for (let index = 0; index < number; index++) {
+  //   grades.push(
+  //     <GradeComponent
+  //       SubjectName={names[index]}
+  //       Date={"20-09-2023"}
+  //       Grade={5}
+  //     />
+  //   );
+  // }
+
+  // const students = [];
+  // const studentName = ["Mika Mikic", "Pera Peric", "Zika Zikic", "Zika Peric", "Mika Peric"];
+  // for (let index = 0; index < studentName.length + 1; index++) {
+  //   students.push(<StudentComponent Name={studentName[index]} />);
+  // }
+  // let index = 0;
+  // let stud = 0;
 
 
   let namesub;
-  const handleSubjectClick = (subject) => {
+  const handleSubjectClick = async (subject) => {
     setSelectedSubject(subject);
+    setLoading(true);
+    const studs = await getStudentsForSubject(subject.id, token); 
+    setStudents(studs);
     debugger;
-    namesub = subject.props.SubjectName;
+    namesub = subject.subject_name;
     console.log(namesub)
+    setLoading(false);
   };
 
-  const handleStudentClick = (student) =>{
+  const handleStudentClick = async (student) =>{
     setSelectedStudent(student);
+    setLoading(true);
+    const gradeStud = await getGradesForStudentForSubject(
+      selectedSubject.id, student.id,
+      token
+    );
+    setGrades(gradeStud);
+    setLoading(false);
   };
+
+  // useEffect(() => {
+    
+
+  //   console.log(`Izabran predmet: ${selectedSubject}`);
+  // }, [selectedStudent]);
 
   useEffect(() => {
-    
-    console.log(`Izabran predmet: ${selectedSubject}`);
-  }, [selectedStudent]);
+    async function fetchData() {
+      try {
+        // let scgr;
+        // let gre;
+        // if (userType === "admin") {
+        //   debugger;
+        //   scgr = storedHelper.id;
+        //   gre = storedHelper.school_grade.id;
+        // } else {
+        //   scgr = user.id;
+        //   gre = user.school_grade_id;
+        // }
 
-  const { user, userType } = useStateContext();
+        debugger;
+        const subjectsData = await getSubjectsForProfessor(user.id, token);
+        setSubjects(subjectsData);
+        const grt = await getGradeType(token);
+        setgradeTypes(grt);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <p>Učitavanje...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
   let path = "/";
   if (userType == "admin") {
     path = "/professor";
@@ -84,7 +140,8 @@ export default function ProfessorInsert() {
           <div className="subjects">
             {subjects.map((subject) => (
               <SubjectsComponent
-                SubjectName={names[index++]}
+                key={subject.id}
+                SubjectName={subject.subject_name}
                 onClick={() => handleSubjectClick(subject)}
               />
             ))}
@@ -99,9 +156,11 @@ export default function ProfessorInsert() {
         >
           <p style={{ marginLeft: "22px" }}>Spisak ucenika na predmetu:</p>
           <div className="students" style={{ marginLeft: "10px" }}>
-            {students.map((student) => (
+            {students && students.map((student) => (
               <StudentComponent
-                Name={studentName[stud++]}
+                key={student.id}
+                Name={student.name_surname}
+                Grade={student.school_grade.name_of_school_grade}
                 onClick={() => handleStudentClick(student)}
               />
             ))}
@@ -117,7 +176,8 @@ export default function ProfessorInsert() {
         >
           <form action="" className="formaProf">
             <p style={{ marginBottom: "5px" }}>
-              Naziv predmeta: {selectedStudent ? selectedSubject.props.SubjectName : ""}
+              Naziv predmeta:{" "}
+              {selectedStudent ? selectedSubject.subject_name : ""}
             </p>
             <label htmlFor="tipOcene">Odaberite tip:</label>
             <select
@@ -125,9 +185,13 @@ export default function ProfessorInsert() {
               id="tipOcene"
               style={{ marginBottom: "5px" }}
             >
-              {tipovi.map((tip, index) => (
-                <option key={index} value={tip}>
-                  {tip}
+              {tipovi.map((grade, index) => (
+                <option
+                  key={grade.id}
+                  value={grade.grade_type_name}
+                  selected={index === 1}
+                >
+                  {grade.grade_type_name}
                 </option>
               ))}
             </select>
@@ -140,7 +204,14 @@ export default function ProfessorInsert() {
             <p style={{ marginLeft: "5px" }}>Ocene:</p>
           </div>
           <div className="grades" id="profgrades">
-            {grades}
+            {grades && grades.map((grade) => (
+              <GradeComponent
+                GradeType={grade.gradeType.id}
+                SubjectName={grade.subject.subject_name}
+                Date={grade.date}
+                Grade={grade.grade}
+              />
+            ))}
           </div>
         </div>
       </div>

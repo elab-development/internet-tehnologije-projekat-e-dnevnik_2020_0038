@@ -31,6 +31,15 @@ button {
     cursor: pointer;
 }
 
+.filterhelp{
+    width: 480px;
+}
+
+button:hover {
+    cursor: pointer !important;
+    background-color: #4aa982 !important;
+}
+
 .forma{
     display: flex;
     flex-direction: column;

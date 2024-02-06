@@ -116,7 +116,7 @@ export default function Login() {
       // }
     }catch(error) {
         console.error(error);
-        setError("Greška prilikom prijave.");
+        setError("Greška prilikom prijave. Podaci nisu ispravni");
         setLoading(false);
       }
   };

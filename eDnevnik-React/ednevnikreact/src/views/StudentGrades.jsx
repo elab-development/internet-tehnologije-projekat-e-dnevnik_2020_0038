@@ -2,40 +2,46 @@ import BackButton from "../components/BackButton.jsx";
 import SubjectsComponent from "../components/SubjectsComponent.jsx";
 import GradeComponent from "./GradeComponent.jsx";
 import React, { useState, useEffect } from "react";
-import { getSubjects } from "../service/services.tsx";
+import { getChildrenForParent, getGradeType, getGradesForStudent, getStudentProfile, getSubjects } from "../service/services.tsx";
 import { Subject } from "../service/model.tsx";
 import { useStateContext } from "../contexts/ContextProvider.jsx";
 
 export default function StudentGrade() {
-    const { user, userType } = useStateContext();
+  const { user, userType, token, storedHelper } = useStateContext();
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [grades, setGrades] = useState([]);
-  const [filteredGrades, setFilteredGrades] = useState([]);
-  const [isFilterSet, setFilter] = useState(false);
-  const [selectedSubject, setSubject] = useState();
-  const [isSetGradeType, setGradeType] = useState(false);
+  const [filteredGrades, setFilteredGrades] = useState([]);//niz filtriranih ocena
+  const [isFilterSet, setFilter] = useState(false);// da li je dugme Izbrisi filter kliknuto
+  const [selectedSubject, setSubject] = useState();//odabrani predmet
+  const [isSetGradeType, setGrType] = useState(false);
+  const [gradeTypes, setgradeTypes] = useState([]);//tip ocena
+  const [selectedGradeType, setSelectedGradeType] = useState("");
+  const [isFilterSetType, setFilterSet] = useState(false);
 
-  const tipovi = [
-    "Aktivnost",
-    "Ocena",
-    "Ocena na polugodistu",
-    "Zakljucna ocena",
-  ];
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const subjectsData = await getSubjects();
+        let scgr;
+        let gre;
+        if(userType === "parent"){ 
+          debugger;
+          scgr = storedHelper.id;;
+          gre = storedHelper.school_grade.id;
+        }else{
+          scgr = user.id;
+          gre = user.school_grade_id;
+        }
+
+        const subjectsData = await getSubjects(gre, token);
         setSubjects(subjectsData);
+        const tipovi = await getGradeType(token);
+        setgradeTypes(tipovi);
+        const gr = await getGradesForStudent(scgr, token);
+        setGrades(gr);
         setLoading(false);
-        const gradesData = subjectsData.map((subject) => ({
-          SubjectName: subject.subject_name,
-          Date: "20-09-2023",
-          Grade: Math.floor(Math.random() * (5 - 1 + 1)) + 1,
-        }));
-        setGrades(gradesData);
       } catch (error) {
         setError(error.message);
         setLoading(false);
@@ -47,7 +53,25 @@ export default function StudentGrade() {
 
 
   const filterGradesBySubject = (subjectName) => {
-    return grades.filter((grade) => grade.SubjectName === subjectName);
+    if (isFilterSetType){
+      return grades.filter(
+        (grade) =>
+          grade.gradeType.grade_type_name === selectedGradeType &&
+          grade.subject.subject_name === subjectName
+      );
+    }
+      return grades.filter(
+        (grade) => grade.subject.subject_name === subjectName
+      );
+  };
+
+  const filterGradesByGradeType = (type) => {
+    debugger;
+    return grades.filter(
+      (grade) =>
+        grade.gradeType.grade_type_name === type &&
+        grade.subject.subject_name === selectedSubject
+    );
   };
 
   const handleSubjectClick = (subjectName) => {
@@ -57,6 +81,13 @@ export default function StudentGrade() {
     setSubject(subjectName);
     console.log("Filtered Grades:", filteredGrades);
   };
+
+  const setNewFilter = (type) => {
+    debugger;
+    const gr = filterGradesByGradeType(type);
+    setFilteredGrades(gr);
+    setFilter(true);
+  }
 
   if (loading) {
     return <p>Učitavanje...</p>;
@@ -71,6 +102,7 @@ export default function StudentGrade() {
     path = "/student";
   }
 
+  debugger;
   return (
     <div>
       <div className="page">
@@ -86,18 +118,31 @@ export default function StudentGrade() {
             ))}
           </div>
         </div>
-        <div style={isFilterSet ? { display: "inline" } : { display: "none" }}>
+        <div
+          className="filterhelp"
+          style={isFilterSet ? { display: "inline" } : { display: "none" }}
+        >
           <p style={{ marginLeft: "45px", marginBottom: "5px" }} id="tipOcene">
-            Izaberite tip ocene iz predmeta {selectedSubject}:
+            Izaberite tip ocena koje zelite da pregledate:
           </p>
           <select
             name="gradeType"
             id="tipOcene"
             style={{ marginBottom: "0px", marginLeft: "45px" }}
-          >
-            {tipovi.map((tip, index) => (
-              <option key={index} value={tip}>
-                {tip}
+            onChange={(e) => {
+              debugger;
+              setSelectedGradeType(e.target.value);
+              setFilterSet(true);
+              setNewFilter(e.target.value);
+            }}
+                      >
+            {gradeTypes.map((grade, index) => (
+              <option
+                key={grade.id}
+                value={grade.grade_type_name}
+                selected={index === 1}
+              >
+                {grade.grade_type_name}
               </option>
             ))}
           </select>
@@ -110,28 +155,36 @@ export default function StudentGrade() {
           >
             Ocene iz predmeta {selectedSubject}:
           </p>
-          <div className="grades" style={{ height: "350px" }}>
+          <div
+            className="grades"
+            style={{
+              height: "380px",
+              width: "495px",
+              marginLeft: "20px",
+              overflowY: "scroll",
+            }}
+          >
             {filteredGrades.map((grade) => (
               <GradeComponent
-                key={grade.id}
-                SubjectName={grade.SubjectName}
-                Date={grade.Date}
-                Grade={grade.Grade}
+                GradeType={grade.gradeType.id}
+                SubjectName={grade.subject.subject_name}
+                Date={grade.date}
+                Grade={grade.grade}
               />
             ))}
           </div>
           <button
             onClick={() => {
               setFilter(false);
-              setGradeType(false);
+              setGrType(false);
             }}
             style={{ marginLeft: "160px" }}
           >
             Ukloni filter
           </button>
         </div>
-        <div>
-          <p style={{ marginLeft: "45px", marginBottom: "5px" }} id="tipOcene">
+        <div style={{ marginLeft: "10px" }}>
+          {/* <p style={{ marginLeft: "45px", marginBottom: "5px" }} id="tipOcene">
             Izaberite tip za sve ocene:
           </p>
           <select
@@ -139,20 +192,20 @@ export default function StudentGrade() {
             id="tipOcene"
             style={{ marginBottom: "0px", marginLeft: "45px" }}
           >
-            {tipovi.map((tip, index) => (
-              <option key={index} value={tip}>
-                {tip}
+            {gradeTypes.map((grade) => (
+              <option key={grade.id} value={grade.grade_type_name}>
+                {grade.grade_type_name}
               </option>
             ))}
-          </select>
+          </select> */}
           <p style={{ marginLeft: "45px" }}>Spisak svih ocena:</p>
           <div className="grades" style={{ height: "420px" }}>
             {grades.map((grade) => (
               <GradeComponent
-                key={grade.id}
-                SubjectName={grade.SubjectName}
-                Date={grade.Date}
-                Grade={grade.Grade}
+                GradeType={grade.gradeType.id}
+                SubjectName={grade.subject.subject_name}
+                Date={grade.date}
+                Grade={grade.grade}
               />
             ))}
           </div>

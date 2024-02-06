@@ -1,12 +1,12 @@
 import image from "../images/student.jpg";
 
 
-export default function StudentComponent({ Name, onClick }) {
+export default function StudentComponent({ Name, Grade, onClick }) {
   return (
     <div className="student" onClick={onClick}>
       <div style={{ textDecoration: "none", marginLeft: "10px" }}>
         <p>Ime prezime: {Name}</p>
-        <p>Razred: Prvi razred srednje skole</p>
+        <p>Razred: {Grade}</p>
       </div>
       <img
         src={image}
