@@ -24,12 +24,19 @@ export default function ProfessorLayout() {
       value: user[key],
     }));
 
-    name = allAttributes.find((attribute) => attribute.key === "name_surname");
+    if(userType == "admin"){
+      name = "na admin stranicu";
+    }else{
+      name = allAttributes.find(
+        (attribute) => attribute.key === "name_surname"
+      ).value;
+    }
+    
   }
 
   return (
     <div style={{ height: "100vh" }}>
-      <NavBarComponent Text={"Dobrodosli " + name.value} />
+      <NavBarComponent Text={"Dobrodosli " + name} />
 
       <Outlet />
     </div>

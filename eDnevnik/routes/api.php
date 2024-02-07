@@ -44,7 +44,7 @@ Route::post('/zaboravljenaLozinka', [ForgotPasswordController::class, 'sendReset
 
 Route::get('/zaboravljenaLoznika/{token}', function (string $token) {
     return response()->json(['token' => $token]);
-})->name('password.reset')->middleware('guest');
+})->middleware('guest');
 
 Route::post('/resetLozinka/reset',[ForgotPasswordController::class,'reset'])->name('password.update')->middleware('guest');
 
@@ -76,7 +76,7 @@ Route::group(['middleware' => ['auth:sanctum', 'professor']], function (){
     Route::post('/students/{student_id}/grades',[GradeController::class,'update']);
 
     //radi - brise odredjenu ocenu
-    Route::delete('/professors/{professor_id}/deleteGrades', [GradeController::class,'destroy']);
+    Route::post('/professors/{professor_id}/deleteGrades', [GradeController::class,'destroy']);
 
     //radi - prikaz odredjenog ucenika - kao njegov profil svi
     Route::get('/studentsProfile/{student_id}',[StudentController::class,'show']);
@@ -120,7 +120,7 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function (){
     Route::put('/subjects/{subject_id}',[SubjectController::class,'update']);//napisana
 
     //radi - dodavanje novog predmeta odredjenom razredu za odredjenog prof
-    Route::post('/schoolGrades/{school_grade_id}/subjects', [SubjectController::class,'stosre']);//napisana
+    Route::post('/schoolGrades/{school_grade_id}/subjects', [SubjectController::class,'store']);//napisana
 
     //radi - brisanje predmeta
     Route::delete('/subjects/{subject_id}', [SubjectController::class,'destroy']);//napisana

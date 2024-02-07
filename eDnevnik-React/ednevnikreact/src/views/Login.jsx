@@ -96,24 +96,6 @@ export default function Login() {
 
       setLoading(false);
       debugger;
-      //setToken(123);
-      // switch (userType) {
-      //   case "student":
-      //     navigate("/student/");
-      //     break;
-      //   case "professor":
-      //     navigate("/professor/");
-      //     break;
-      //   case "parent":
-      //     navigate("/parent/");
-      //     break;
-      //   case "admin":
-      //     navigate("/admin/");
-      //     break;
-      //   default:
-      //     navigate("/");
-      //     break;
-      // }
     }catch(error) {
         console.error(error);
         setError("Greška prilikom prijave. Podaci nisu ispravni");

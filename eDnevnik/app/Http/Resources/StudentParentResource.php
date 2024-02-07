@@ -16,6 +16,7 @@ class StudentParentResource extends JsonResource
     {
         return [
             'id' =>$this->resource->id,
+            'email'=>$this->resource->email,
             'name_surname'=>$this->resource->name_surname,
             'children'=> $this->resource->students
         ];

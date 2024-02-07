@@ -48,7 +48,7 @@ class SubjectController extends Controller
         $subject->school_grade_id = $school_grade_id;
         $data = json_decode($request->getContent(), true);
         $rules = [
-            'SubjectName' => 'required|max:50',
+            'subject_name' => 'required|max:50',
             'Professor' => 'required'
         ];
 
@@ -56,7 +56,7 @@ class SubjectController extends Controller
         if($validator->fails()){
             return response()->json('Ime predmeta mora da bude uneto', 404);
         }else{
-            $subject->subject_name = $data["SubjectName"];
+            $subject->subject_name = $data["subject_name"];
             $subject->professor_id = $data["Professor"];
 
             $res = $subject->save();
@@ -98,7 +98,7 @@ class SubjectController extends Controller
     {
         $data = json_decode($request->getContent(), true);
         $rules = [
-            'SubjectName' => 'required|max:50'
+            'subject_name' => 'required|max:50'
         ];
 
         $validator = Validator::make($data, $rules);
@@ -108,7 +108,7 @@ class SubjectController extends Controller
             //$request = json_decode($request->getContent(), true);
             //$subject->name_of_school_grade = $request[0]["SubjectName"];
 
-            $grade= Subject::find($subject_id)->update(['subject_name' => $data["SubjectName"]]);
+            $grade= Subject::find($subject_id)->update(['subject_name' => $data["subject_name"]]);
             return response()->json('Predmet je uspesno azuriran', 200);
         }
     }

@@ -16,6 +16,7 @@ class ProfessorResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
+            'email'=>$this->resource->email,
             'name_surname' => $this->resource->name_surname,
             'subjects' => $this->resource->subjects
         ];

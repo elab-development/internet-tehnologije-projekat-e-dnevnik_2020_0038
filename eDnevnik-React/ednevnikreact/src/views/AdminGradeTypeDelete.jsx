@@ -7,61 +7,100 @@ import ParentHome from "./ParentHome";
 import ParentComponent from "../components/ParentComponent";
 import SubjectsComponent from "../components/SubjectsComponent";
 import { useContext, useState, useEffect } from "react";
+import { deleteGradeType, getGradeType } from "../service/services.tsx";
 
 export default function AdminGradeTypeDelete() {
-  const { userType, setToken, setUserType } = useStateContext();
+  const { userType, setToken, setUserType, token } = useStateContext();
   const [gradeType, setGradeType] = useState();
   const [inputValue, setInputValue] = useState("");
-  const navigate = useNavigate();
-
-  const students = [];
-  let stud = 0;
-  const studentName = [
-    "Aktivnost",
-    "Ocena",
-    "Ocena na polugodistu",
-    "Zakljucna ocena",
-  ];
-
-  for (let index = 0; index < studentName.length; index++) {
-    students.push(<SubjectsComponent SubjectName={studentName[index]} />);
-  }
-
-  const handleGraqdeTypeClick = (student) => {
-    setGradeType(student.props.SubjectName);
-  };
+  const [tipovi, setTipovi] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [errorValue, setErrorValue] = useState("");
 
   useEffect(() => {
-    console.log(`Izabrana ocena: ${gradeType}`);
-    setInputValue(gradeType ? gradeType : "");
-  }, [gradeType]);
+    async function fetchData() {
+      try {
+        debugger;
+        const par = await getGradeType(token);
+        setTipovi(par);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const sendTo = async () => {
+
+    setLoading(true);
+
+    try {
+      debugger;
+      const res = await deleteGradeType(gradeType.id, token);
+      const par = await getGradeType(token);
+      setTipovi(par);
+      setLoading(false);
+    } catch (error) {
+      setError("Doslo je do greske prilikom unosa");
+      setLoading(false);
+    }
+  };
+
+  const handleGradeTypeClick = (tip) => {
+    setGradeType(tip);
+    setInputValue(tip.grade_type_name);
+  };
+
+  if (loading) {
+    return <p>Učitavanje...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div>
-      <div className="usable" style={{ marginBottom: "120px" }}>
+      <div className="usable" style={{ marginBottom: "50px" }}>
         <div>
           <p style={{ marginLeft: "45px" }}>Spisak svih tipova ocena:</p>
           <div className="" style={{ height: "200px" }}>
-            {students.map((student) => (
+            {tipovi.map((tip) => (
               <SubjectsComponent
-                SubjectName={studentName[stud++]}
-                onClick={() => handleGraqdeTypeClick(student)}
+                key={tip.id}
+                SubjectName={tip.grade_type_name}
+                onClick={() => handleGradeTypeClick(tip)}
               />
             ))}
           </div>
         </div>
         <div>
-          <div className="usable">
+          <div
+            className="adminInsert"
+            style={{ height: "450px", marginBottom: "30px" }}
+          >
+            <p style={{ marginTop: "50px", marginLeft: "50px" }}>
+              {errorValue}
+            </p>
             <form
-              action=""
-              method="post"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const ime = formData.get("name_surname");
+                debugger;
+                sendTo({ ime });
+              }}
               className="logInArg formSub adminspec"
               style={
                 gradeType ? { visibility: "visible" } : { visibility: "hidden" }
               }
             >
               <div className="logintext">
-                <label htmlFor="name_surname">Izmena naziva tipa ocene:</label>
+                <label htmlFor="name_surname">Naziva tipa ocene:</label>
                 <p>{inputValue}</p>
               </div>
 

@@ -7,48 +7,111 @@ import ParentHome from "./ParentHome";
 import ParentComponent from "../components/ParentComponent";
 import React, { useState, useEffect } from "react";
 import StudentComponent from "../components/StudentComponent";
+import { getAllParents, getAllStudents, getSchoolGrades, saveStudentForParent } from "../service/services.tsx";
 
 export default function AdminStudentInsert() {
-  const { userType, setToken, setUserType } = useStateContext();
-  const [inputValue, setInputValue] = useState("");
-  const navigate = useNavigate();
+  const { user, userType, token, storedHelper } = useStateContext();
+  const [parent, setParent] = useState("");
+  const [parents, setParents] = useState(null);
+  const [grades, setGrades] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [students, setStudents] = useState([]);
+  const [errorValue, setErrorValue] = useState("");
 
-  const parents = [];
-  let stud = 0;
-  const parentName = [
-    "Mika Veselinovic",
-    "Pera Mitic",
-    "Zika Saric",
-    "Zika Djukic",
-    "Mika Petrovic",
-  ];
-  const email = [
-    "mikamikic@gmail.com",
-    "peraperic@gmail.com",
-    "zikazikic@gmail.com",
-    "zikaperic@gmail.com",
-    "mikaperic@gmail.com",
-  ];
-  for (let index = 0; index < parentName.length + 1; index++) {
-    parents.push(<ParentComponent Name={parentName[index]} Email={email[index]}/>);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        debugger;
+        const subjectsData = await getSchoolGrades(token);
+        setGrades(subjectsData);
+        const par = await getAllParents(token);
+        setParents(par);
+        const studs = await getAllStudents(token);
+        setStudents(studs);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const sendTo = async ({ gradeType, ime, sifra, email, god }) => {
+    if (
+      typeof ime !== "string" ||
+      ime.trim() === "" ||
+      !ime.includes(" ") ||
+      ime.length < 5
+    ) {
+      setErrorValue("Niste pravilno unelio ime i prezime");
+      return;
+    }
+
+    if (typeof sifra !== "string" || sifra.trim() === "" || sifra.length < 5) {
+      setErrorValue("Sifra mora da ima minimum 6 karaktera");
+      return;
+    }
+
+    debugger;
+    if (isNaN(parseInt(god))) {
+      setErrorValue("Godine moraju da budu broj");
+      return;
+    }
+    let godine = parseInt(god);
+
+    if (god < 16 || god > 19) {
+      setErrorValue("Godine moraju da budu izmedju 15-20");
+      return;
+    }
+
+    if (
+      typeof email !== "string" ||
+      email.trim() === "" ||
+      email.length < 6 ||
+      !email.includes("@")
+    ) {
+      setErrorValue("Email mora da sadrzi znak @");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      debugger;
+      const res = await saveStudentForParent(
+        parent.id,
+        ime,
+        email,
+        sifra,
+        gradeType,
+        godine,
+        token
+      );
+      const gradeStud = await getAllStudents(token);
+      setStudents(gradeStud);
+      setParent(null);
+      setLoading(false);
+    } catch (error) {
+      setError("Dozvoljeno je jedan unos po danu");
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <p>Učitavanje...</p>;
   }
 
-  const students = [];
-  let ind = 0;
-  const studentName = [
-    "Mika Mikic",
-    "Pera Peric",
-    "Zika Zikic",
-    "Zika Peric",
-    "Mika Peric",
-  ];
-  for (let index = 0; index < studentName.length + 1; index++) {
-    students.push(<StudentComponent Name={studentName[index]} />);
+  if (error) {
+    return <p>{error}</p>;
   }
 
   const handleParentClick = (student) => {
     debugger;
-    setInputValue(student ? student.props.Name : "");
+    setParent(student);
   }
   return (
     <div>
@@ -56,11 +119,12 @@ export default function AdminStudentInsert() {
         <div>
           <p style={{ marginLeft: "45px" }}>Spisak svih roditelja:</p>
           <div className="grades" style={{ height: "420px" }}>
-            {parents.map((par) => (
+            {parents.map((parent) => (
               <ParentComponent
-                Name={parentName[stud]}
-                Email={email[stud++]}
-                onClick={() => handleParentClick(par)}
+                key={parent.id}
+                Name={parent.name_surname}
+                Email={parent.email}
+                onClick={() => handleParentClick(parent)}
               />
             ))}
           </div>
@@ -68,37 +132,89 @@ export default function AdminStudentInsert() {
         <div>
           <p style={{ marginLeft: "45px" }}>Spisak svih studenata:</p>
           <div className="grades" style={{ height: "420px" }}>
-            {students.map((student) => (
-              <StudentComponent Name={studentName[ind++]} />
-            ))}
+            {students &&
+              students.map((student) => (
+                <StudentComponent
+                  key={student.id}
+                  Name={student.name_surname}
+                  Grade={student.school_grade.name_of_school_grade}
+                />
+              ))}
           </div>
         </div>
         <div>
           <div
-            className="usable"
+            className="adminInsert"
             style={
-              inputValue ? { visibility: "visible" } : { visibility: "hidden" }
+              parent ? { visibility: "visible" } : { visibility: "hidden" }
             }
           >
+            <p>{errorValue}</p>
             <form
-              action=""
-              method="post"
               className="logInArg formSub"
-              style={{ marginLeft: "70px", marginTop: "70px" }}
+              style={{ marginLeft: "20px", marginTop: "10px" }}
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const ime = formData.get("name_surname");
+                const sifra = formData.get("password");
+                const email = formData.get("email");
+                const gradeType = formData.get("gradeType");
+                const god = formData.get("age");
+                debugger;
+                sendTo({ gradeType, ime, sifra, email, god});
+              }}
             >
-              <p>Ime i prezime roditelja: {inputValue}</p>
+              <p>Ime i prezime roditelja: {parent ? parent.name_surname : ""}</p>
               <div className="logintext">
                 <label htmlFor="name_surname">Ime i prezime ucenika:</label>
-                <input type="text" id="name_surname" placeholder="Pera Peric" />
+                <input
+                  type="text"
+                  id="name_surname"
+                  name="name_surname"
+                  placeholder="Pera Peric"
+                />
+              </div>
+              <label htmlFor="tipOcene">Odaberite razred:</label>
+              <select
+                name="gradeType"
+                id="tipOcene"
+                style={{
+                  marginBottom: "2px",
+                  width: "130px",
+                  height: "30px",
+                  fontSize: "medium",
+                }}
+              >
+                {grades.map((grade) => (
+                  <option key={grade.id} value={grade.id} style={{}}>
+                    {grade.name_of_school_grade}
+                  </option>
+                ))}
+              </select>
+
+              <div className="logintext">
+                <label htmlFor="age">Godine:</label>
+                <input
+                  type="text"
+                  id="age"
+                  name="age"
+                  placeholder="16"
+                />
               </div>
               <div className="logintext">
                 <label htmlFor="email">Email:</label>
-                <input type="text" id="email" placeholder="primer@gmail.com" />
+                <input
+                  type="text"
+                  id="email"
+                  name="email"
+                  placeholder="primer@gmail.com"
+                />
               </div>
 
               <div className="logintext">
                 <label htmlFor="password">Sifra:</label>
-                <input type="password" id="password" />
+                <input type="password" id="password" name="password" />
               </div>
 
               <button id="button5">Unesi ucenika</button>

@@ -87,7 +87,7 @@ button:hover {
     background-color: #b0dbcf;
     border-radius: 1em;
     width: 400px;
-    height: 340px;
+    height: 400px;
     margin-left: 70px;
     margin-top: 70px
 }
@@ -99,9 +99,16 @@ button:hover {
     justify-content: center;
 }
 
+.adminInsert{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 .adminspec{
     margin-left: 70px; 
-    margin-top: 70px 
+    margin-top: 10px 
 }
 .nesto{
     display: flex;

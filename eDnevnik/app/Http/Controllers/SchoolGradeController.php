@@ -42,7 +42,7 @@ class SchoolGradeController extends Controller
     {
         $request = json_decode($request->getContent(), true);
         $grade = new SchoolGrade;
-        $grade->name_of_school_grade = $request["Name"];
+        $grade->name_of_school_grade = $request["name_of_school_grade"];
 
         $res = $grade->save();
         return $res ? response()->json('Razred je uspesno unet', 200) : response()->json('Razred nije unet', 404);
@@ -83,7 +83,7 @@ class SchoolGradeController extends Controller
         $grade = new SchoolGrade;
         $data = json_decode($request->getContent(), true);
         $rules = [
-            'Name' => 'required|max:50'
+            'name_of_school_grade' => 'required|max:50'
         ];
 
         $validator = Validator::make($data, $rules);
@@ -91,7 +91,7 @@ class SchoolGradeController extends Controller
             //$grade= SchoolGrade::find($school_grade_id)->update(['name_of_school_grade' => $data[0]["Name"]]);
             return response()->json('Ime razreda mora da bude pravilno uneto', 404);
         }else{
-            $grade= SchoolGrade::find($school_grade_id)->update(['name_of_school_grade' => $data["Name"]]);
+            $grade= SchoolGrade::find($school_grade_id)->update(['name_of_school_grade' => $data["name_of_school_grade"]]);
             return response()->json('Razred je uspesno azuriran', 200);
         }
     }

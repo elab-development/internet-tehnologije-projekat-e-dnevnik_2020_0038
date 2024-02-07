@@ -6,79 +6,118 @@ import BackButton from "../components/BackButton";
 import ParentHome from "./ParentHome";
 import ParentComponent from "../components/ParentComponent";
 import React, { useState, useEffect } from "react";
+import { deleteStudent, getAllStudents } from "../service/services.tsx";
+import StudentComponent from "../components/StudentComponent";
 
 export default function AdminStudentDelete() {
-  const { userType, setToken, setUserType } = useStateContext();
-  const [parent, setParent] = useState();
-  const navigate = useNavigate();
-  const [inputValue, setInputValue] = useState("");
-  const [inputEmail, setEmailValue] = useState("");
+  const { user, userType, token, storedHelper } = useStateContext();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [students, setStudents] = useState([]);
+  const [selectedStudents, setselectedStudents] = useState(null);
+  const [errorValue, setErrorValue] = useState("");
+  const [input, setInput] = useState();
 
-  const students = [];
-  let stud = 0;
-  const studentName = [
-    "Mika Mikic",
-    "Pera Peric",
-    "Zika Zikic",
-    "Zika Peric",
-    "Mika Peric",
-  ];
-  const email = [
-    "mikamikic@gmail.com",
-    "peraperic@gmail.com",
-    "zikazikic@gmail.com",
-    "zikaperic@gmail.com",
-    "mikaperic@gmail.com",
-  ];
-  for (let index = 0; index < studentName.length; index++) {
-    students.push(
-      <ParentComponent Name={studentName[index]} Email={email[index]} />
-    );
-  }
-
-  const handleParentClick = (student) => {
-    setParent(student);
+  const handleStudentClick = (student) => {
+    setselectedStudents(student);
+    setInput(student.name_surname);
   };
 
-  useEffect(() => {
-    debugger;
-    console.log(`Izabrana ocena: ${parent}`);
-    setInputValue(parent ? parent.props.Name : "");
-    setEmailValue(parent ? parent.props.Email : "");
-  }, [parent]);
+  useEffect(
+    () => {
+      async function fetchData() {
+        try {
+          debugger;
+          const studs = await getAllStudents(token);
+          setStudents(studs);
+          setLoading(false);
+        } catch (error) {
+          setError(error.message);
+          setLoading(false);
+        }
+      }
+      setInput(selectedStudents ? selectedStudents.name_surname : "");
+
+      fetchData();
+    },
+    [],
+    input
+  );
+
+  const sendTo = async () => {
+    setLoading(true);
+    let ime = input;
+    if (
+      typeof ime !== "string" ||
+      ime.trim() === "" ||
+      !ime.includes(" ") ||
+      ime.length < 5
+    ) {
+      setErrorValue("Niste pravilno unelio ime i prezime");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      debugger;
+      const res = await deleteStudent(selectedStudents.id, token);
+      const studs = await getAllStudents(token);
+      setStudents(studs);
+      setselectedStudents(null);
+      setLoading(false);
+    } catch (error) {
+      setError("Greska prilikom brisanja ucenika.");
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <p>Učitavanje...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div>
-      <div className="usable" style={{ marginBottom: "50px" }}>
+      <div className="usable" style={{ marginBottom: "20px" }}>
         <div>
           <p style={{ marginLeft: "45px" }}>Spisak svih studenata:</p>
           <div className="grades" style={{ height: "420px" }}>
-            {students.map((student) => (
-              <ParentComponent
-                Email={email[stud]}
-                Name={studentName[stud++]}
-                onClick={() => handleParentClick(student)}
-              />
-            ))}
+            {students &&
+              students.map((student) => (
+                <StudentComponent
+                  key={student.id}
+                  Name={student.name_surname}
+                  Grade={student.school_grade.name_of_school_grade}
+                  onClick={() => handleStudentClick(student)}
+                />
+              ))}
           </div>
         </div>
         <div>
-          <div className="usable">
+          <div className="adminInsert">
+            <p>{errorValue}</p>
             <form
-              action=""
-              method="post"
+              onSubmit={(e) => {
+                e.preventDefault();
+                debugger;
+                sendTo();
+              }}
               className="logInArg formSub"
               style={
-                parent ? { visibility: "visible" } : { visibility: "hidden" }
+                selectedStudents ? { visibility: "visible" } : { visibility: "hidden" }
               }
             >
               <div className="logintext">
                 <label htmlFor="name_surname">Ime i prezime:</label>
-                <p style={{ marginRight: "130px" }}>{inputValue}</p>
+                <p style={{ marginRight: "130px" }}>{selectedStudents ? selectedStudents.name_surname : ""}</p>
               </div>
               <div className="logintext">
                 <label htmlFor="email">Email:</label>
-                <p style={{ marginRight: "50px" }}>{inputEmail}</p>
+                <p style={{ marginRight: "50px" }}>{selectedStudents ? selectedStudents.email : ""}</p>
               </div>
 
               <button id="button5">Izbrisi ucenika</button>

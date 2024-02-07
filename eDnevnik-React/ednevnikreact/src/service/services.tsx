@@ -1,5 +1,5 @@
 import axios from "axios";
-import  {Subject, Student, Professor, StudentParent, Admin, GradeType, Grade}  from "./model.tsx";
+import  {Subject, Student, Professor, StudentParent, Admin, GradeType, Grade, SchoolGrade}  from "./model.tsx";
 
 
 export async function getSubjects(id: number, token: string){
@@ -90,7 +90,7 @@ export async function getUverenjeStudenta(id: number, token: string, name: strin
 
 export async function getGradeType(
   token: string
-) {
+) { 
   try {
     const sendTo = "/api/typeOfGrades";
     axios.defaults.headers.common.Authorization = "Bearer " + token;
@@ -171,6 +171,22 @@ export async function getStudentsForSubject(id: number, token: string) {
   }
 }
 
+export async function getSchoolGrades(token: string) {
+  try {
+    const sendTo = "/api/schoolGrades";
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.get(sendTo);
+    debugger;
+    return response.data.razredi as SchoolGrade[];
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
 export async function getGradesForStudentForSubject(idSubject: number, idStud:number, token: string) {
   try {
     const sendTo =
@@ -180,6 +196,550 @@ export async function getGradesForStudentForSubject(idSubject: number, idStud:nu
     const response = await axios.get(sendTo);
     debugger;
     return response.data.spisak_ocena as Grade;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function saveGradeForStudent(
+  idSubject: number,
+  idStud: number,
+  idProf: number,
+  token: string,
+  grade: string,
+  idGradeType: number,
+  date: string
+) {
+  try {
+    const sendTo = "/api/professors/" + idProf + "/grades";
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    debugger;
+    const response = await axios.post(sendTo, {
+      grade: grade,
+      grade_type_id: idGradeType,
+      student_id: idStud,
+      subject_id: idSubject,
+      date: date
+    });
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function updateGradeForStudent(
+  idSubject: number,
+  idStud: number,
+  idProf: number,
+  token: string,
+  grade: string,
+  date: string
+) {
+  try {
+    const sendTo = "/api/students/" + idStud + "/grades";
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.post(sendTo, {
+      grade: grade,
+      student_id: idStud,
+      subject_id: idSubject,
+      date: date,
+      professor_id: idProf
+    });
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function deleteGradeForStudent(
+  idSubject: number,
+  idStud: number,
+  idProf: number,
+  token: string,
+  date: string
+) {
+  try {
+    const sendTo = "/api/professors/" + idProf + "/deleteGrades";
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    debugger;
+    const response = await axios.post(sendTo, {
+      student_id: idStud,
+      subject_id: idSubject,
+      date: date,
+      professor_id: idProf,
+    });
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function getAllParents(
+  token: string
+) {
+  try {
+    const sendTo =
+      "/api/parents";
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.get(sendTo);
+    debugger;
+    return response.data.roditelji as StudentParent[];
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function getAllStudents(token: string) {
+  try {
+    const sendTo = "/api/students";
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.get(sendTo);
+    debugger;
+    return response.data.studenti as StudentParent[];
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function saveStudentForParent(idRod:number, name:string, email:string, password:string, gradeId:number, age: string,
+  token: string) {
+  try {
+    const sendTo = "/api/parents/" + idRod + "/students";
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.post(sendTo, {
+      name_surname: name,
+      email: email,
+      password: password,
+      school_grade: gradeId,
+      age: age
+    });
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function updateStudent(
+  idStud: number,
+  name: string,
+  token: string
+) {
+  try {
+    const sendTo = "/api/students/" + idStud;
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.put(sendTo, {
+      name_surname: name
+    });
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function deleteStudent(
+  idStud: number,
+  token: string
+) {
+  try {
+    const sendTo = "/api/students/" + idStud;
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.delete(sendTo);
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function getAllProfessors(token: string) {
+  try {
+    const sendTo = "/api/professors";
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.get(sendTo);
+    debugger;
+    return response.data.profesori as Professor[];
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function saveProfessor(
+  email: string,
+  name: string,
+  password: string,
+  token: string
+) {
+  try {
+    const sendTo = "/api/professors/";
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.post(sendTo, {
+      name_surname: name,
+      email: email,
+      password: password
+    });
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function updateProfessor(
+  name: string,
+  idProf:  number,
+  token: string
+) {
+  try {
+    const sendTo = "/api/professors/" + idProf;
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.put(sendTo, {
+      name_surname: name,
+    });
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function deleteProfessor(idProf: number, token: string) {
+  try {
+    const sendTo = "/api/professors/" + idProf;
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.delete(sendTo);
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function saveParent(
+  email: string,
+  name: string,
+  password: string,
+  token: string
+) {
+  try {
+    const sendTo = "/api/parents/";
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.post(sendTo, {
+      name_surname: name,
+      email: email,
+      password: password,
+    });
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function updateParent(name: string, idPer: number, token: string) {
+  try {
+    const sendTo = "/api/parents/" + idPer;
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.put(sendTo, {
+      name_surname: name,
+    });
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function deleteParent(idPer: number, token: string) {
+  try {
+    const sendTo = "/api/parents/" + idPer;
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.delete(sendTo);
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function saveGradeType(
+  GradeType: string,
+  token: string
+) {
+  try {
+    const sendTo = "/api/typeOfGrades/";
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.post(sendTo, {
+      GradeType: GradeType,
+    });
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function updateGradeType(
+  GradeType: string,
+  idTip: number,
+  token: string
+) {
+  try {
+    const sendTo = "/api/typeOfGrades/" + idTip;
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.put(sendTo, {
+      GradeType: GradeType,
+    });
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function deleteGradeType(idTip: number, token: string) {
+  try {
+    const sendTo = "/api/typeOfGrades/" + idTip;
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.delete(sendTo);
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function saveSchoolGrade(name: string, token: string) {
+  try {
+    const sendTo = "/api/schoolGrades/";
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.post(sendTo, {
+      name_of_school_grade: name,
+    });
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function updateSchoolgrade(
+  name: string,
+  idGrade: number,
+  token: string
+) {
+  try {
+    const sendTo = "/api/schoolGrades/" + idGrade;
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.put(sendTo, {
+      name_of_school_grade: name,
+    });
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function deleteSchoolGrade(idGrade: number, token: string) {
+  try {
+    const sendTo = "/api/schoolGrades/" + idGrade;
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.delete(sendTo);
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function saveSubject(idRaz:number, name: string, idProf:number, token: string) {
+  try {
+    const sendTo = "/api/schoolGrades/" + idRaz + "/subjects";
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.post(sendTo, {
+      subject_name: name,
+      Professor: idProf
+    });
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function updateSubject(
+  name: string,
+  idGrade: number,
+  token: string
+) {
+  try {
+    const sendTo = "/api/subjects/" + idGrade;
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.put(sendTo, {
+      subject_name: name,
+    });
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function deleteSubject(idGrade: number, token: string) {
+  try {
+    const sendTo = "/api/subjects/" + idGrade;
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.delete(sendTo);
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function forgotenPass(
+  guard: string,
+  email: string,
+) {
+  try {
+    const sendTo = "/api/zaboravljenaLozinka";
+
+    debugger;
+    const response = await axios.post(sendTo, {
+      guard: guard,
+      email: email
+    });
+    debugger;
+    return response.data.token;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function resetPass(
+  guard: string,
+  email: string,
+  password: string,
+  token: string,
+) {
+  try {
+    const sendTo = "/api/resetLozinka/reset";
+
+    const response = await axios.post(sendTo, {
+      guard: guard,
+      email: email,
+      password:password,
+      token: token
+    });
+    debugger;
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data.message);

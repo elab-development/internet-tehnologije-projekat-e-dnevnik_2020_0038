@@ -10,6 +10,7 @@ use App\Models\StudentParent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Validator;
 
 class ForgotPasswordController extends Controller
 {
@@ -34,9 +35,12 @@ class ForgotPasswordController extends Controller
     public function sendResetLinkEmail(Request $request)
     {
         $guard = request()->guard;
-
+        $email = request()->email;
+        $rules = [
+            'email' => 'required|email'
+        ];
         $prom = true;
-        switch($guard){
+        /*switch($guard){
             case 'admin': 
                 $request->validate(['email' => 'required|email']);
                 break;
@@ -53,7 +57,10 @@ class ForgotPasswordController extends Controller
                 $prom = false;
                 break;
         }
-        if($prom){
+        */
+
+        $validator = Validator::make($email, $rules);
+        if(!$validator->fails()){
             $response = $this->broker($guard)->sendResetLink(
                 $request->only('email')
             );
@@ -111,13 +118,13 @@ class ForgotPasswordController extends Controller
         switch($guard){
             case 'admin': 
                 $request->validate([
-                    'email' => 'required|email|exists:admins',
+                    'email' => 'required|email',
                     'password' => 'required|min:6'
                 ]);
                 break;
             case 'student_parent': 
                 $request->validate([
-                    'email' => 'required|email|exists:student_parents',
+                    'email' => 'required|email',
                     'password' => 'required|min:6'
                 ]);
                 break;
@@ -129,7 +136,7 @@ class ForgotPasswordController extends Controller
                 break;
             case 'professor':
                 $request->validate([
-                    'email' => 'required|email|exists:professors',
+                    'email' => 'required|email',
                     'password' => 'required|min:6'
                 ]);
                 break;

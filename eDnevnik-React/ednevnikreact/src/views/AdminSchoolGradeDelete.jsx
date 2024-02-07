@@ -7,65 +7,101 @@ import ParentHome from "./ParentHome";
 import ParentComponent from "../components/ParentComponent";
 import SubjectsComponent from "../components/SubjectsComponent";
 import { useContext, useState, useEffect } from "react";
+import { deleteSchoolGrade, getSchoolGrades } from "../service/services.tsx";
 
 export default function AdminSchoolGradeDelete() {
-  const { userType, setToken, setUserType } = useStateContext();
-  const [gradeType, setGradeType] = useState();
-  const [inputValue, setInputValue] = useState("");
-  const navigate = useNavigate();
-
-  const students = [];
-  let stud = 0;
-  const studentName = [
-    "Pravi razred srednje skole",
-    "Drugi razred srednje skole",
-    "Treci razred srednje skole",
-    "Cetvrti razred srednje skole",
-  ];
-
-  for (let index = 0; index < studentName.length; index++) {
-    students.push(<SubjectsComponent SubjectName={studentName[index]} />);
-  }
-
-  const handleGraqdeTypeClick = (student) => {
-    setGradeType(student.props.SubjectName);
-  };
+  const { userType, setToken, setUserType, token } = useStateContext();
+  const [tipovi, setTipovi] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [grade, setGrade] = useState();
+  const [inputValue, setInputValue] = useState();
+  const [errorValue, setErrorValue] = useState("");
 
   useEffect(() => {
-    console.log(`Izabrana ocena: ${gradeType}`);
-    setInputValue(gradeType ? gradeType : "");
-  }, [gradeType]);
+    async function fetchData() {
+      try {
+        debugger;
+        const par = await getSchoolGrades(token);
+        setTipovi(par);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const sendTo = async () => {
+    setLoading(true);
+
+    try {
+      debugger;
+      const res = await deleteSchoolGrade(grade.id, token);
+      const par = await getSchoolGrades(token);
+      setInputValue("");
+      setErrorValue("");
+      setGrade(null);
+      setTipovi(par);
+      setLoading(false);
+    } catch (error) {
+      setError("Doslo je do greske prilikom unosa");
+      setLoading(false);
+    }
+  };
+
+  const handleGradeClick = (tip) => {
+    setGrade(tip);
+    setInputValue(tip.name_of_school_grade);
+  };
+
+  if (loading) {
+    return <p>Učitavanje...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div>
-      <div className="usable" style={{ marginBottom: "120px" }}>
+      <div className="usable" style={{ marginBottom: "70px" }}>
         <div>
           <p style={{ marginLeft: "5px" }}>Spisak svih razreda:</p>
           <div className="" style={{ height: "200px" }}>
-            {students.map((student) => (
+            {tipovi.map((tip) => (
               <SubjectsComponent
-                SubjectName={studentName[stud++]}
-                onClick={() => handleGraqdeTypeClick(student)}
+                key={tip.id}
+                SubjectName={tip.name_of_school_grade}
+                onClick={() => handleGradeClick(tip)}
               />
             ))}
           </div>
         </div>
         <div>
-          <div className="usable">
+          <div className="adminInsert">
+            <p style={{ marginLeft: "40px" }}>{errorValue}</p>
             <form
-              action=""
-              method="post"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const ime = formData.get("name_surname");
+                debugger;
+                sendTo({ ime });
+              }}
               className="logInArg formSub adminspec"
               style={
-                gradeType ? { visibility: "visible" } : { visibility: "hidden" }
+                grade ? { visibility: "visible" } : { visibility: "hidden" }
               }
             >
               <div className="logintext">
-                <label htmlFor="name_surname">Izmena naziva tipa ocene:</label>
+                <label htmlFor="name_surname">Naziv razreda:</label>
                 <p>{inputValue}</p>
               </div>
 
-              <button id="button5">Izbrisis naziv tipa ocene</button>
+              <button id="button5">Izbrisis razred</button>
             </form>
           </div>
         </div>

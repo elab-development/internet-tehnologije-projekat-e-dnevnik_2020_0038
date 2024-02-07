@@ -98,14 +98,14 @@ class ProfessorController extends Controller
     {
         $data = json_decode($request->getContent(), true);
         $rules = [
-            'NameSurname' => 'required|max:50'
+            'name_surname' => 'required|max:50'
         ];
 
         $validator = Validator::make($data, $rules);
         if($validator->fails()){
             return response()->json('Ime profesora mora da bude uneto', 404);
         }else{
-            $grade= Professor::find($professor_id)->update(['name_surname' => $data["NameSurname"]]);
+            $grade= Professor::find($professor_id)->update(['name_surname' => $data["name_surname"]]);
             return response()->json('Profesor je uspesno azuriran', 200);
         }
     }

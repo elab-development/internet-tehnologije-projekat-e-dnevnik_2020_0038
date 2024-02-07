@@ -6,104 +6,150 @@ import BackButton from "../components/BackButton";
 import ParentHome from "./ParentHome";
 import ParentComponent from "../components/ParentComponent";
 import SubjectsComponent from "../components/SubjectsComponent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getSchoolGrades, getSubjects, updateSubject } from "../service/services.tsx";
 
 export default function AdminSubjectChange() {
-  const { userType, setToken, setUserType } = useStateContext();
-  const [selectedGrade, setGrade] = useState();
-  const [selectedSubject, setSubject] = useState();
-  const navigate = useNavigate();
+  const { userType, setToken, setUserType, token } = useStateContext();
+  const [razredi, setRazredi] = useState(null);
+  const [profesori, setprof] = useState(null);
+  const [predmeti, setPredmeti] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedProf, setSelectedProf] = useState(null);
+  const [subject, setSubject] = useState();
+  const [grade, setGrade] = useState();
+  const [inputValue, setInputValue] = useState();
+  const [errorValue, setErrorValue] = useState("");
 
-  const students = [];
-  const subjects = [];
-  let stud = 0;
-  let ind = 0;
-  const studentName = [
-    "Pravi razred srednje skole",
-    "Drugi razred srednje skole",
-    "Treci razred srednje skole",
-    "Cetvrti razred srednje skole",
-  ];
-  const names = [
-    "Matematika prvi razred",
-    "Matematika drugi razred",
-    "Matematika treci razred",
-    "Matematika cetvrti razred",
-    "Biologija prvi razred",
-    "Biologija drugi razred",
-    "Biologija treci razred",
-    "Biologija cetvrti razred",
-  ];
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        debugger;
+        const par = await getSchoolGrades(token);
+        setRazredi(par);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    }
 
-  for (let index = 0; index < studentName.length; index++) {
-    students.push(<SubjectsComponent SubjectName={studentName[index]} />);
-  }
-  for (let index = 0; index < names.length; index++) {
-    subjects.push(<SubjectsComponent SubjectName={names[index]} />);
-  }
+    fetchData();
+  }, []);
 
-  const handleGradeClick = (student) => {
-    setGrade(student.props.SubjectName);
+  const sendTo = async ({ ime }) => {
+    if (typeof ime !== "string" || ime.trim() === "" || ime.length < 2) {
+      setErrorValue("Niste pravilno uneli naziv predmeta");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      debugger;
+      const res = await updateSubject(ime, subject.id, token);
+      const par = await getSchoolGrades(token);
+      setErrorValue("");
+      setGrade(null);
+      setSelectedProf(null);
+      setRazredi(par);
+      setSubject(null);
+      setGrade(null);
+      setLoading(false);
+    } catch (error) {
+      setError("Doslo je do greske prilikom unosa");
+      setLoading(false);
+    }
   };
 
-  const handleSubjectClick = (subject) =>{
-    setSubject(subject.props.SubjectName);
+  const handleGradeClick = async (tip) => {
+    setGrade(tip);
+    setLoading(true);
+    const par = await getSubjects(tip.id, token);
+    setPredmeti(par);
+    setLoading(false);
+  };
+
+  const handleSubjectClick = (tip) => {
+    setSubject(tip);
+    setInputValue(tip.subject_name);
+  }
+
+  if (loading) {
+    return <p>Učitavanje...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
   }
 
   return (
     <div>
-      <div className="usable" style={{ marginBottom: "120px" }}>
+      <div className="usable" style={{ marginBottom: "50px" }}>
         <div>
           <p style={{ marginLeft: "5px" }}>Spisak svih razreda:</p>
           <div className="" style={{ height: "200px" }}>
-            {students.map((student) => (
+            {razredi.map((tip) => (
               <SubjectsComponent
-                SubjectName={studentName[stud++]}
-                onClick={() => handleGradeClick(student)}
+                key={tip.id}
+                SubjectName={tip.name_of_school_grade}
+                onClick={() => handleGradeClick(tip)}
               />
             ))}
           </div>
         </div>
         <div
-          style={
-            selectedGrade ? { visibility: "visible" } : { visibility: "hidden" }
-          }
+          style={grade ? { visibility: "visible" } : { visibility: "hidden" }}
         >
-          <p style={{ marginLeft: "45px" }}>Spisak predmeta za {selectedGrade}:</p>
+          <p style={{ marginLeft: "45px" }}>
+            Spisak predmeta za {grade ? grade.name_of_school_grade : ""}:
+          </p>
           <div
             className=""
             style={{ overflowY: "scroll", height: "340px", marginLeft: "40px" }}
           >
-            {subjects.map((subject) => (
-              <SubjectsComponent
-                SubjectName={names[ind++]}
-                onClick={() => handleSubjectClick(subject)}
-              />
-            ))}
+            {predmeti &&
+              predmeti.map((tip) => (
+                <SubjectsComponent
+                  key={tip.id}
+                  SubjectName={tip.subject_name}
+                  onClick={() => handleSubjectClick(tip)}
+                />
+              ))}
           </div>
         </div>
         <div>
           <div
-            className="usable"
-            style={
-              selectedSubject
-                ? { visibility: "visible" }
-                : { visibility: "hidden" }
-            }
+            className="adminInsert"
+            style={grade ? { visibility: "visible" } : { visibility: "hidden" }}
           >
+            <p style={{marginLeft: "40px"}}>{errorValue}</p>
             <form
-              action=""
-              method="post"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const ime = formData.get("name_surname");
+                debugger;
+                sendTo({ ime });
+              }}
               className="logInArg formSub"
-              style={{ marginLeft: "70px", marginTop: "70px" }}
+              style={{ marginLeft: "70px", marginTop: "20px" }}
             >
-              <p>Za {selectedGrade}</p>
+              <p>Za {grade ? grade.name_of_school_grade : ""}</p>
               <div className="logintext">
                 <label htmlFor="name_surname">Ime za novi predmeta:</label>
-                <input type="text" id="name_surname" placeholder="" value={selectedSubject}/>
+                <input
+                  type="text"
+                  id="name_surname"
+                  name="name_surname"
+                  placeholder=""
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                />
               </div>
 
-              <button id="button5">Unesi predmet</button>
+              <button id="button5">Izmeni predmet</button>
             </form>
           </div>
         </div>

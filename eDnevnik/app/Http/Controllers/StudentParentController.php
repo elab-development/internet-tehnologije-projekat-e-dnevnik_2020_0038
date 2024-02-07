@@ -102,14 +102,14 @@ class StudentParentController extends Controller
     {
         $data = json_decode($request->getContent(), true);
         $rules = [
-            'NameSurname' => 'required|max:50'
+            'name_surname' => 'required|max:50'
         ];
 
         $validator = Validator::make($data, $rules);
         if($validator->fails()){
             return response()->json('Ime roditelja mora da bude uneto', 404);
         }else{
-            $grade= StudentParent::find($parent_id)->update(['name_surname' => $data[0]["NameSurname"]]);
+            $grade= StudentParent::find($parent_id)->update(['name_surname' => $data["name_surname"]]);
             return response()->json('Roditelj je uspesno azuriran', 200);
         }
     }

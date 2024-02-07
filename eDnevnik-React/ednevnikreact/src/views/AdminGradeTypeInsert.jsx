@@ -6,48 +6,103 @@ import BackButton from "../components/BackButton";
 import ParentHome from "./ParentHome";
 import ParentComponent from "../components/ParentComponent";
 import SubjectsComponent from "../components/SubjectsComponent";
+import { getGradeType, saveGradeType } from "../service/services.tsx";
+import { useEffect, useState } from "react";
 
 export default function AdminGradeTypeInsert() {
-  const { userType, setToken, setUserType } = useStateContext();
-  const navigate = useNavigate();
+  const { userType, setToken, setUserType, token } = useStateContext();
+  const [tipovi, setTipovi] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [errorValue, setErrorValue] = useState("");
 
-  const students = [];
-  let stud = 0;
-  const studentName = [
-    "Aktivnost",
-    "Ocena",
-    "Oena na polugodistu",
-    "Zakljucna ocena",
-  ];
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        debugger;
+        const par = await getGradeType(token);
+        setTipovi(par);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    }
 
-  for (let index = 0; index < studentName.length; index++) {
-    students.push(<SubjectsComponent SubjectName={studentName[index]} />);
+    fetchData();
+  }, []);
+
+  const sendTo = async ({ ime}) => {
+    if (
+      typeof ime !== "string" ||
+      ime.trim() === "" ||
+      !ime.includes(" ") ||
+      ime.length < 2
+    ) {
+      setErrorValue("Niste pravilno unelio naziv tipa ocene");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      debugger;
+      const res = await saveGradeType(ime, token);
+      const par = await getGradeType(token);
+      setTipovi(par);
+      setLoading(false);
+    } catch (error) {
+      setError("Doslo je do greske prilikom unosa");
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <p>Učitavanje...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
   }
 
   return (
     <div>
-      <div className="usable" style={{ marginBottom: "120px" }}>
+      <div className="usable" style={{ marginBottom: "50px" }}>
         <div>
           <p style={{ marginLeft: "45px" }}>Spisak svih tipova ocena:</p>
           <div className="" style={{ height: "200px" }}>
-            {students.map((student) => (
-              <SubjectsComponent SubjectName={studentName[stud++]} />
+            {tipovi.map((tip) => (
+              <SubjectsComponent
+                key={tip.id}
+                SubjectName={tip.grade_type_name}
+              />
             ))}
           </div>
         </div>
         <div>
-          <div className="usable">
+          <div className="adminInsert">
+            <p>{errorValue}</p>
             <form
-              action=""
-              method="post"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const ime = formData.get("name_surname");
+                debugger;
+                sendTo({ ime });
+              }}
               className="logInArg formSub"
-              style={{ marginLeft: "70px", marginTop: "70px" }}
+              style={{ marginLeft: "70px", marginTop: "50px" }}
             >
               <div className="logintext">
                 <label htmlFor="name_surname">Ime za novi tip ocene:</label>
-                <input type="text" id="name_surname" placeholder="" />
+                <input
+                  type="text"
+                  id="name_surname"
+                  name="name_surname"
+                  placeholder=""
+                />
               </div>
-              
+
               <button id="button5">Unesi tip ocene</button>
             </form>
           </div>

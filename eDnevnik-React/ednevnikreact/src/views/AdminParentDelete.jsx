@@ -6,58 +6,76 @@ import BackButton from "../components/BackButton";
 import ParentHome from "./ParentHome";
 import ParentComponent from "../components/ParentComponent";
 import React, { useState, useEffect } from "react";
+import { deleteParent, getAllParents } from "../service/services.tsx";
 
 export default function AdminParentDelete() {
-  const { userType, setToken, setUserType } = useStateContext();
-  const [parent, setParent] = useState();
-  const navigate = useNavigate();
+  const { user, userType, token, storedHelper } = useStateContext();
+  const [parent, setParent] = useState("");
+  const [parents, setParents] = useState(null);
+  const [grades, setGrades] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [students, setStudents] = useState([]);
+  const [errorValue, setErrorValue] = useState("");
   const [inputValue, setInputValue] = useState("");
-  const [inputEmail, setEmailValue] = useState("");
-
-  const students = [];
-  let stud = 0;
-  const studentName = [
-    "Mika Mikic",
-    "Pera Peric",
-    "Zika Zikic",
-    "Zika Peric",
-    "Mika Peric",
-  ];
-  const email = [
-    "mikamikic@gmail.com",
-    "peraperic@gmail.com",
-    "zikazikic@gmail.com",
-    "zikaperic@gmail.com",
-    "mikaperic@gmail.com",
-  ];
-  for (let index = 0; index < studentName.length; index++) {
-    students.push(
-      <ParentComponent Name={studentName[index]} Email={email[index]} />
-    );
-  }
-
-  const handleParentClick = (student) => {
-    setParent(student);
-  };
 
   useEffect(() => {
-    debugger;
-    console.log(`Izabrana ocena: ${parent}`);
-    setInputValue(parent ? parent.props.Name : "");
-    setEmailValue(parent ? parent.props.Email : "");
-  }, [parent]);
+    async function fetchData() {
+      try {
+        debugger;
+        const par = await getAllParents(token);
+        setParents(par);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const handleParentClick = async (parent) => {
+    setParent(parent);
+    setInputValue(parent.name_surname);
+  };
+
+  const sendTo = async () => {
+    setLoading(true);
+
+    try {
+      debugger;
+      const res = await deleteParent(parent.id, token);
+      const par = await getAllParents(token);
+      setParents(par);
+      setParent(null);
+      setLoading(false);
+    } catch (error) {
+      setError("Doslo je do greske prilikom brisanja. Roditelj ima decu.");
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <p>Učitavanje...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div>
-      <div className="usable" style={{ marginBottom: "50px" }}>
+      <div className="usable" style={{ marginBottom: "40px" }}>
         <div>
           <p style={{ marginLeft: "45px" }}>Spisak svih roditelja:</p>
           <div className="grades" style={{ height: "420px" }}>
-            {students.map((student) => (
+            {parents.map((parent) => (
               <ParentComponent
-                Email={email[stud]}
-                Name={studentName[stud++]}
-                onClick={() => handleParentClick(student)}
+                key={parent.id}
+                Name={parent.name_surname}
+                Email={parent.email}
+                onClick={() => handleParentClick(parent)}
               />
             ))}
           </div>
@@ -65,8 +83,10 @@ export default function AdminParentDelete() {
         <div>
           <div className="usable">
             <form
-              action=""
-              method="post"
+              onSubmit={(e) => {
+                e.preventDefault();
+                sendTo();
+              }}
               className="logInArg formSub"
               style={
                 parent ? { visibility: "visible" } : { visibility: "hidden" }
@@ -74,11 +94,15 @@ export default function AdminParentDelete() {
             >
               <div className="logintext">
                 <label htmlFor="name_surname">Ime i prezime:</label>
-                <p style={{ marginRight: "130px" }}>{inputValue}</p>
+                <p style={{ marginRight: "130px" }}>
+                  {parent ? parent.name_surname : ""}
+                </p>
               </div>
               <div className="logintext">
                 <label htmlFor="email">Email:</label>
-                <p style={{ marginRight: "50px" }}>{inputEmail}</p>
+                <p style={{ marginRight: "50px" }}>
+                  {parent ? parent.email : ""}
+                </p>
               </div>
 
               <button id="button5">Izbrisi roditelja</button>
