@@ -68,6 +68,10 @@ class AuthControllerStudent extends Controller
         
             $parent = Student::where('email',$email)->firstOrFail();
             $token = $parent->createToken('auth_token')->plainTextToken;
+            //dd($request->session());
+            
+            $request->session()->regenerateToken();
+            //dd(csrf_token());
 
             return response()->json([
             'success' => 'Uspesno ste se ulogovali',

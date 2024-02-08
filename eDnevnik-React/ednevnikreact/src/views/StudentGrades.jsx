@@ -7,7 +7,7 @@ import { Subject } from "../service/model.tsx";
 import { useStateContext } from "../contexts/ContextProvider.jsx";
 
 export default function StudentGrade() {
-  const { user, userType, token, storedHelper } = useStateContext();
+  const { user, userType, token, storedHelper,csrfToken } = useStateContext();
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -35,7 +35,7 @@ export default function StudentGrade() {
           gre = user.school_grade_id;
         }
 
-        const subjectsData = await getSubjects(gre, token);
+        const subjectsData = await getSubjects(gre, token, csrfToken);
         setSubjects(subjectsData);
         const tipovi = await getGradeType(token);
         setgradeTypes(tipovi);

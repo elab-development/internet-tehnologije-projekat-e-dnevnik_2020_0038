@@ -39,7 +39,7 @@ export default function StudentLayout() {
 
   return (
     <div style={{ height: "100vh" }}>
-      <NavBarComponent Text={"Dobrodosli " + name.value}/>
+      <NavBarComponent Text={"Dobrodosli " + name?.value}/>
 
       <Outlet />
     </div>

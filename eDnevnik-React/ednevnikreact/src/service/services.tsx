@@ -2,16 +2,24 @@ import axios from "axios";
 import  {Subject, Student, Professor, StudentParent, Admin, GradeType, Grade, SchoolGrade}  from "./model.tsx";
 
 
-export async function getSubjects(id: number, token: string){
-    //const res = await axios.get("http://127.0.0.1:8000/api/schoolGrades/1/subjects");
-    const sendTo = "/api/schoolGrades/" + id + "/subjects";
-    axios.defaults.headers.common.Authorization = "Bearer " + token;
+export async function getSubjects(id: number, token: string, csrfToken: string) {
+  //const res = await axios.get("http://127.0.0.1:8000/api/schoolGrades/1/subjects");
+  const sendTo = "/api/schoolGrades/" + id + "/subjects";
+  axios.defaults.headers.common.Authorization = "Bearer " + token;
+  axios.defaults.headers.common["X-CSRF-TOKEN"] = csrfToken;
 
-    const res = await axios.get(
-      sendTo
-    );
-    debugger;
-    return res.data.predmeti as Subject[]
+  const res = await axios.get(sendTo);
+  debugger;
+  return res.data.predmeti as Subject[];
+}
+
+export async function getCsrf() {
+  debugger;
+  const sendTo = "/api/csrf-token";
+  const res = await axios.get(sendTo);
+  axios.defaults.headers.common["X-CSRF-TOKEN"] = res.data.csrf_token;
+  debugger;
+  return res.data;
 }
 
 export async function login(path: string, email: string, password: string) {
@@ -19,6 +27,7 @@ export async function login(path: string, email: string, password: string) {
     console.log("drugi");
     const sendTo = "/api/login" + path;
 
+    debugger;
     const response = await axios.post(
       sendTo,
       {
@@ -26,6 +35,9 @@ export async function login(path: string, email: string, password: string) {
         password: password,
       }
     );
+
+    const csrfToken = response.config.headers["X-CSRF-TOKEN"];
+    document.cookie = `X-CSRF-TOKEN=${csrfToken}; Path=/`;
 
     const token = response.data.token;
     axios.defaults.headers.common.Authorization = "Bearer " + token;
@@ -80,6 +92,47 @@ export async function getUverenjeStudenta(id: number, token: string, name: strin
     downloadLink.href = URL.createObjectURL(new Blob([response.data]));
     downloadLink.download = name + "_uverenje_studenta.pdf"; 
     downloadLink.click();
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function sendUverenjeStudentaByEmail(
+  idRaz: number,
+  token: string,
+  email: string,
+  name: string
+) {
+  try {
+    // console.log("drugi");
+    // const sendTo = "/api/generate-pdf/" + idRaz;
+    // axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    // const response = await axios.get(sendTo, {
+    //   responseType: "blob",
+    // });
+
+    // debugger;
+    // const formData = new FormData();
+    // formData.append("email", email);
+    // formData.append(
+    //   "pdf",
+    //   new Blob([response.data]),
+    //   name + "_uverenje_studenta.pdf"
+    // );
+    //   debugger;
+
+    const res = await axios.post("/api/send-pdf-by-email", {
+      email: email,
+      name: name,
+      grade: idRaz,
+      token: token
+    });
+    console.log("PDF uspješno poslan na e-mail studentu.");
+    return res;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data.message);
@@ -714,7 +767,7 @@ export async function forgotenPass(
       email: email
     });
     debugger;
-    return response.data.token;
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data.message);
@@ -724,22 +777,41 @@ export async function forgotenPass(
 }
 
 export async function resetPass(
+  token:string,
   guard: string,
   email: string,
   password: string,
-  token: string,
 ) {
   try {
     const sendTo = "/api/resetLozinka/reset";
 
+    debugger;
     const response = await axios.post(sendTo, {
+      token:token,
       guard: guard,
       email: email,
       password:password,
-      token: token
     });
     debugger;
     return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+export async function poziv(
+) {
+  try {
+    const sendTo = "/api/zaboravljenaLoz";
+    debugger;
+    const response = await axios.get(sendTo, {
+    
+    });
+    debugger;
+    return response.data.token;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data.message);

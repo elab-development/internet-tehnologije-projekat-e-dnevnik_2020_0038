@@ -7,7 +7,7 @@ import ParentHome from "./views/ParentHome";
 import ProfessorChange from "./views/ProfessorChange";
 import ProfessorHome from "./views/ProfessorHome";
 import ProfessorInsert from "./views/ProfessorInsert";
-import Home from "./home";
+import Home from "./home.jsx";
 import NotFound from "./views/NotFound";
 import DefaultLayout from "./components/DefaultLayout";
 import GuestLayout from "./components/GuestLayout";
@@ -45,6 +45,8 @@ import AdminSubject from "./views/AdminSubject";
 import AdminSubjectInsert from "./views/AdminSubjectInsert";
 import AdminSubjectChange from "./views/AdminSubjectChange";
 import AdminSubjectDelete from "./views/AdminSubjectDelete";
+import WaitPage from "./views/WaitPage";
+import UploadForm from "./components/UploadFile.jsx";
 
 const router = createBrowserRouter([
   {
@@ -64,8 +66,12 @@ const router = createBrowserRouter([
         element: <ResetPassword />,
       },
       {
-        path: "/novaLoznika",
+        path: "/zaboravljenaLoz",
         element: <NewPassword />,
+      },
+      {
+        path: "/wait",
+        element: <WaitPage />,
       },
     ],
   },
@@ -85,6 +91,10 @@ const router = createBrowserRouter([
         path: "/student/grade",
         element: <StudentGrades />,
       },
+      {
+        path: "/student/upload",
+        element: <UploadForm />
+      }
     ],
   },
   {

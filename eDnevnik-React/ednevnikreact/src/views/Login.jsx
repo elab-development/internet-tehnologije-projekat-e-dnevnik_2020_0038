@@ -82,17 +82,17 @@ export default function Login() {
       
       setLoading(true);
 
-      const { data, token } = await login(path, email, password);
+      const res = await login(path, email, password);
 
-      if (!data) {
+      if (!res.data) {
         setError("Ne postoji korisnik sa unetim podacima.");
         setLoading(false);
         return;
       }
 
       debugger;
-      setToken(token);
-      setUser(data);
+      setToken(res.token);
+      setUser(res.data);
 
       setLoading(false);
       debugger;

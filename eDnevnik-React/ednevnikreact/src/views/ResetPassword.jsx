@@ -31,9 +31,9 @@ export default function ResetPassword() {
     debugger;
     try{
       setLoading(true);
-      const res = await forgotenPass(userType, ime);
+      const res = await forgotenPass(userType, ime.ime);
       if(res.status === 200){
-        return navigate("/novaLoznika");
+        //return navigate("/novaLozinka");
       }
       setLoading(false);
     }catch(error){
@@ -83,7 +83,7 @@ export default function ResetPassword() {
             />
           </div>
 
-          <button id="button5" onClick={sendTo}>
+          <button id="button5">
             Posalji email
           </button>
         </form>

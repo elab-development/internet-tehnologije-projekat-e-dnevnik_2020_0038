@@ -4,9 +4,11 @@ const StateContext = createContext({
   user: null,
   token: null,
   userType: "",
+  csrfToken: null,
   storedHelper: null,
   setUser: () => {},
   setstoredHelper: () => {},
+  setCsrfToken: () => {},
   setToken: () => {},
   setUserType: () => {},
   logout: () => {},
@@ -17,9 +19,21 @@ export const ContextProvider = ({children})  =>{
   const [user, _setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [token, _setToken] = useState(localStorage.getItem("ACCESS_TOKEN")); //localStorage.getItem("ACCESS_TOKEN")
   const [userType, _setUserType] = useState(localStorage.getItem("userType"));
+  const [csrfToken, _setcsrfToken] = useState(
+    localStorage.getItem("csrfToken"));
   const [storedHelper, _setstoredHelper] = useState(
     JSON.parse(localStorage.getItem("storedHelper"))
   );
+
+  const setCsrfToken = (token) => {
+    _setcsrfToken(token);
+    debugger;
+    if (token) {
+      localStorage.setItem("csrfToken", token);
+    } else {
+      localStorage.removeItem("csrfToken");
+    }
+  };
 
   const setToken = (token) => {
     _setToken(token);
@@ -73,8 +87,10 @@ export const ContextProvider = ({children})  =>{
         user,
         storedHelper,
         token,
+        csrfToken,
         userType,
         setUser,
+        setCsrfToken,
         setstoredHelper,
         setToken,
         setUserType,

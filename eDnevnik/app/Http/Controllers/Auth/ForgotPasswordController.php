@@ -36,7 +36,9 @@ class ForgotPasswordController extends Controller
     {
         $guard = request()->guard;
         $email = request()->email;
+        $data = json_decode($request->getContent(), true);
         $rules = [
+            'guard'=>'required',
             'email' => 'required|email'
         ];
         $prom = true;
@@ -59,19 +61,21 @@ class ForgotPasswordController extends Controller
         }
         */
 
-        $validator = Validator::make($email, $rules);
+        $validator = Validator::make($data, $rules);
         if(!$validator->fails()){
             $response = $this->broker($guard)->sendResetLink(
                 $request->only('email')
             );
 
             return $response === Password::RESET_LINK_SENT
-            ? back()->with(['status' => __($response)])
-            : back()->withErrors(['email' => __($response)]);
+            ? (['status' => (200)])
+            : (['email' => __($response)]);
         }
 
         return response()->json(['errorMessage' => 'Ne postoji mejl!'], 404);
     }
+
+    
 
     protected function resetPassword($user, $password, $request)
     {

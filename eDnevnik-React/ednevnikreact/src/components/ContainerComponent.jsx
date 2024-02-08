@@ -8,6 +8,7 @@ import profesor from "../images/profesor.jpg";
 import tip from "../images/tip.jpg";
 import razred from "../images/razred.jpg";
 import subject from "../images/subject.jpg";
+import dok from "../images/dokumenti.jpg";
 
 export default function ContainerComponent(props) {
     let im;
@@ -31,6 +32,8 @@ export default function ContainerComponent(props) {
       im = razred;
     } else if (props.Image == "subject") {
       im = subject;
+    } else if (props.Image == "dok") {
+      im = dok;
     }
       return (
         <div>

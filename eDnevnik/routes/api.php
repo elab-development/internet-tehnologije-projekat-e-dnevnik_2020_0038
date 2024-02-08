@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Password;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -36,15 +37,20 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
+Route::get('/csrf-token', function () {
+    $csrfToken = bin2hex(random_bytes(32));
+    return response()->json(['csrf_token' => $csrfToken]);
+});
+
 Route::get('/login', function () {
     return response()->json(['Poruka' => 'Dobrodosli na login stranicu']);;
 })->name('login')->middleware('guest');
 
 Route::post('/zaboravljenaLozinka', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email')->middleware('guest');
 
-Route::get('/zaboravljenaLoznika/{token}', function (string $token) {
+Route::get('/zaboravljenaLoz/{token}', function (string $token) {
     return response()->json(['token' => $token]);
-})->middleware('guest');
+})->name('password.reset')->middleware('guest');
 
 Route::post('/resetLozinka/reset',[ForgotPasswordController::class,'reset'])->name('password.update')->middleware('guest');
 
@@ -211,6 +217,10 @@ Route::group(['middleware' => ['auth:sanctum', 'student']], function (){
     Route::get('/students/{student_id}/grades',[GradeController::class,'show']);
 
     Route::get('generate-pdf/{student_id}', [PDFController::class, 'generatePDF']);
+
+    Route::post('/send-pdf-by-email', [PDFController::class, 'sendPdfEmail']);
+
+    Route::post('/upload-pdf', [PDFController::class, 'uploadPdf']);
 });
 
 Route::post('/loginRoditelja',[AuthControllerStudentParent::class,'login']);

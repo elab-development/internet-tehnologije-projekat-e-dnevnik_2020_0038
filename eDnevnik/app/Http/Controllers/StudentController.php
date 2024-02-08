@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GradeCollection;
 use App\Http\Resources\StudentCollection;
+use App\Models\Grade;
 use App\Models\SchoolGrade;
 use App\Models\Student;
 use App\Models\StudentParent;
@@ -31,11 +33,31 @@ class StudentController extends Controller
 
 
     
-    public function getAllStudentsForSubject($subject_id){
-        //mozda join fja da probas
-        $subject = Subject::where('id',$subject_id)->first();
-        $schoolGrade = SchoolGrade::where('id', $subject->school_grade_id)->first();
-        $students = Student::where('school_grade_id', $schoolGrade->id)->get();
+    // public function getAllStudentsForSubject($subject_id){
+    //     //mozda join fja da probas
+    //     $subject = Subject::where('id',$subject_id)->first();
+    //     $schoolGrade = SchoolGrade::where('id', $subject->school_grade_id)->first();
+    //     $students = Student::where('school_grade_id', $schoolGrade->id)->get();
+    //     $grades = Grade::where('student_id', $students->id)->get() 
+    //     return new GradeCollection($grades);
+    // }
+
+    public function getAllGradesForSubject($subject_id) {
+        $grades = Grade::join('students', 'grades.student_id', '=', 'students.id')
+                    ->join('subjects', 'grades.subject_id', '=', 'subjects.id')
+                    ->join('school_grades', 'subjects.school_grade_id', '=', 'school_grades.id')
+                    ->where('subjects.id', $subject_id)
+                    ->get(['grades.*']);
+        
+        return new GradeCollection($grades);
+    }
+
+    public function getAllStudentsForSubject($subject_id) {
+        $students = Student::join('school_grades', 'students.school_grade_id', '=', 'school_grades.id')
+                            ->join('subjects', 'school_grades.id', '=', 'subjects.school_grade_id')
+                            ->where('subjects.id', $subject_id)
+                            ->get(['students.*']);
+
         return new StudentCollection($students);
     }
 
