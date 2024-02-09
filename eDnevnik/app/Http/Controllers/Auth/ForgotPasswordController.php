@@ -42,24 +42,6 @@ class ForgotPasswordController extends Controller
             'email' => 'required|email'
         ];
         $prom = true;
-        /*switch($guard){
-            case 'admin': 
-                $request->validate(['email' => 'required|email']);
-                break;
-            case 'student_parent': 
-                $request->validate(['email' => 'required|email']);
-                break;
-            case 'student':
-                $request->validate(['email' => 'required|email']);
-                break;
-            case 'professor':
-                $request->validate(['email' => 'required|email']);
-                break;
-            default:
-                $prom = false;
-                break;
-        }
-        */
 
         $validator = Validator::make($data, $rules);
         if(!$validator->fails()){
@@ -74,6 +56,25 @@ class ForgotPasswordController extends Controller
 
         return response()->json(['errorMessage' => 'Ne postoji mejl!'], 404);
     }
+
+    // public function sendResetLinkEmail(Request $request)
+    // {
+    //     $guard = $request->guard;
+    //     $email = $request->email;
+
+    //     $data = $request->validate([
+    //         'guard' => 'required',
+    //         'email' => 'required|email',
+    //     ]);
+
+    //     $response = Password::broker($guard)->sendResetLink(
+    //         $data
+    //     );
+
+    //     return $response === Password::RESET_LINK_SENT
+    //         ? response()->json(['status' => 200])
+    //         : response()->json(['email' => __($response)], 400);
+    // }
 
     
 

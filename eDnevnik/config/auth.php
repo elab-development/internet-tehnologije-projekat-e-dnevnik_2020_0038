@@ -159,26 +159,31 @@ return [
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,
+            'reset' => env('APP_URL')
         ],
         'student_parent' => [
         'provider' => 'student_parents',
         'table' => 'password_resets',
         'expire' => 60,
+        'reset' => env('APP_URL')
         ],
         'student' => [
         'provider' => 'students',
         'table' => 'password_resets',
         'expire' => 60,
+        'reset' => env('APP_URL')
         ],
         'professor' => [
         'provider' => 'professors',
         'table' => 'password_resets',
         'expire' => 60,
+        'reset' => env('APP_URL')
         ],
         'admin' => [
         'provider' => 'admins',
         'table' => 'password_resets',
         'expire' => 60,
+        'reset' => env('APP_URL')
         ],
     ],
 

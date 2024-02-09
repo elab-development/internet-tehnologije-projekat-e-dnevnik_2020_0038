@@ -31,7 +31,10 @@ class StudentController extends Controller
         return new StudentCollection($students);
     }
 
-
+    public function getPieChart($student_id){
+        $grades = Grade::where('students_id', $student_id)->get();
+        return new GradeCollection($grades);
+    }
     
     // public function getAllStudentsForSubject($subject_id){
     //     //mozda join fja da probas

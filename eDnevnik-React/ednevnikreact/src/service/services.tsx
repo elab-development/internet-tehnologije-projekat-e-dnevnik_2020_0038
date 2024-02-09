@@ -13,6 +13,7 @@ export async function getSubjects(id: number, token: string, csrfToken: string) 
   return res.data.predmeti as Subject[];
 }
 
+
 export async function getCsrf() {
   debugger;
   const sendTo = "/api/csrf-token";
@@ -222,7 +223,7 @@ export async function getStudentsForSubject(id: number, token: string) {
     }
     throw new Error("Unexpected error");
   }
-}
+}//10
 
 export async function getSchoolGrades(token: string) {
   try {
@@ -403,6 +404,7 @@ export async function saveStudentForParent(idRod:number, name:string, email:stri
   }
 }
 
+
 export async function updateStudent(
   idStud: number,
   name: string,
@@ -442,7 +444,7 @@ export async function deleteStudent(
     }
     throw new Error("Unexpected error");
   }
-}
+}//20
 
 export async function getAllProfessors(token: string) {
   try {
@@ -639,7 +641,7 @@ export async function deleteGradeType(idTip: number, token: string) {
     }
     throw new Error("Unexpected error");
   }
-}
+}//30
 
 export async function saveSchoolGrade(name: string, token: string) {
   try {
@@ -752,7 +754,26 @@ export async function deleteSubject(idGrade: number, token: string) {
     }
     throw new Error("Unexpected error");
   }
-}
+}//6
+
+export async function getGradesFoStudentForType(idStud: number, idTip: number, token: string) {
+  try {
+    const sendTo = "/api/students/" + idStud+ "/grades/" + idTip;
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    debugger;
+    const response = await axios.get(sendTo);
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}//6
+
+
 
 export async function forgotenPass(
   guard: string,
@@ -800,7 +821,7 @@ export async function resetPass(
     }
     throw new Error("Unexpected error");
   }
-}
+}//8
 
 export async function poziv(
 ) {

@@ -221,6 +221,8 @@ Route::group(['middleware' => ['auth:sanctum', 'student']], function (){
     Route::post('/send-pdf-by-email', [PDFController::class, 'sendPdfEmail']);
 
     Route::post('/upload-pdf', [PDFController::class, 'uploadPdf']);
+
+    
 });
 
 Route::post('/loginRoditelja',[AuthControllerStudentParent::class,'login']);
