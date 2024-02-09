@@ -5,9 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { login } from "../service/services.tsx";
 import axios from "axios";
+import BackButton from "../components/BackButton.jsx";
 
-export default function Login() {
-  const { user, userType, setUser ,setToken, setUserType } = useStateContext();
+export default function AdminRegister() {
+  const { user, userType, setUser, setToken, setUserType } = useStateContext();
   const [error, setError] = useState();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -35,7 +36,7 @@ export default function Login() {
   const forgotten = () => {
     setUserType(userType);
     return navigate("/resetLozinka");
-  }
+  };
 
   const sendTo = async (event) => {
     event.preventDefault();
@@ -45,7 +46,11 @@ export default function Login() {
     let flag = true;
 
     setUserType(userType);
-    if(typeof email !== "string" || email === "" || !email.includes("@" || email.length < 2)){
+    if (
+      typeof email !== "string" ||
+      email === "" ||
+      !email.includes("@" || email.length < 2)
+    ) {
       setError("Morate da unesete email koji sadrzi @");
       return;
     }
@@ -76,10 +81,8 @@ export default function Login() {
       default:
         navigate("/");
         break;
-
     }
     try {
-      
       setLoading(true);
 
       const res = await login(path, email, password);
@@ -96,82 +99,77 @@ export default function Login() {
 
       setLoading(false);
       debugger;
-    }catch(error) {
-        console.error(error);
-        setError("Greška prilikom prijave. Podaci nisu ispravni");
-        setLoading(false);
-      }
+    } catch (error) {
+      console.error(error);
+      setError("Greška prilikom prijave. Podaci nisu ispravni");
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     debugger;
-    if (userType && user) {
-      switch (userType) {
-        case "student":
-          navigate("/student/");
-          break;
-        case "professor":
-          navigate("/professor/");
-          break;
-        case "parent":
-          navigate("/parent/");
-          break;
-        case "admin":
-          navigate("/admin/");
-          break;
-        default:
-          navigate("/");
-          break;
-      }
-    }
+    // if (userType && user) {
+    //   switch (userType) {
+    //     case "student":
+    //       navigate("/student/");
+    //       break;
+    //     case "professor":
+    //       navigate("/professor/");
+    //       break;
+    //     case "parent":
+    //       navigate("/parent/");
+    //       break;
+    //     case "admin":
+    //       navigate("/admin/");
+    //       break;
+    //     default:
+    //       navigate("/");
+    //       break;
+    //   }
+    // }
   }, [userType, user, navigate]);
 
   return (
-    <div className="homeLogin log">
-      <p style={loading ? { visibility: "visible" }
-              : { visibility: "hidden" }}>Provera...</p>
-      <div className="big">
-        <p>{error}</p>
-        <div className="nesto">
+    <div>
+      <div className="nesto" style={{ marginTop: "60px", marginBottom: "20px" }}>
+        <div className="big">
+          <p>{error}</p>
           <div className="nesto">
-            <div className="logInArg">
-              <img src={person} alt="Slika osobe" className="slika" />
-              <p style={{ margin: "30px" }}>
-                Dobrodosli na {type} login stranicu!
-              </p>
-            </div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                sendTo(e);
-              }}
-              className="logInArg"
-            >
-              <div className="logintext">
-                <label htmlFor="email">Email:</label>
-                <input type="text" id="email" placeholder="primer@gmail.com" />
+            <div className="nesto">
+              <div className="logInArg">
+                <img src={person} alt="Slika osobe" className="slika" />
+                <p style={{ margin: "30px" }}>Registruj novog admina!</p>
               </div>
-
-              <div className="logintext">
-                <label htmlFor="password">Sifra:</label>
-                <input type="password" id="password" />
-              </div>
-
-              <button id="button5" disabled={loading}>
-                {loading ? "Učitavanje..." : "Uloguj se"}
-              </button>
-              {/* <button
-                id="buttonZaboravljenaLoz"
-                onClick={forgotten}
-                style={{ textDecoration: "underline", color: "blue" }}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  sendTo(e);
+                }}
+                className="logInArg"
               >
-                Zaboravljena lozinka?
-              </button> */}
-            </form>
+                <div className="logintext">
+                  <label htmlFor="email">Email:</label>
+                  <input
+                    type="text"
+                    id="email"
+                    placeholder="primer@gmail.com"
+                  />
+                </div>
+
+                <div className="logintext">
+                  <label htmlFor="password">Sifra:</label>
+                  <input type="password" id="password" />
+                </div>
+
+                <button id="button5" disabled={loading}>
+                  Registruj
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
+      <BackButton Path={"/"} />
     </div>
   );
 }
-

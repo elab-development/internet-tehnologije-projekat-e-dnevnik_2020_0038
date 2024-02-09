@@ -9,10 +9,15 @@ export default function StudentHome() {
   const { user, userType, storedHelper } = useStateContext();
 
   let disp;
+  let s;
   debugger;
   if (userType == "student") {
       disp = { display: "none" };
+  }else{
+      s = { display: "none" };
   }
+
+
 
   return (
     <div>
@@ -25,7 +30,7 @@ export default function StudentHome() {
           <ContainerComponent Text={"Profil"} Image={"profil"} />
         </Link>
 
-        <Link to="upload" style={{ textDecoration: "none", color: "black" }}>
+        <Link to="upload" style={{ textDecoration: "none", color: "black" , s}}>
           <ContainerComponent Text={"Dokumenti"} Image={"dok"} />
         </Link>
       </div>

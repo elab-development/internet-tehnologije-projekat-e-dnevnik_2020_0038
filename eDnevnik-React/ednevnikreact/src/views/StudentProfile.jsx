@@ -109,9 +109,13 @@ export default function StudentProfile(props) {
           <p>Ime i prezime roditelj: {nameparent}</p>
           <p>Email roditelja: {emailparent}</p>
         </div>
-        <div className="">
-          <button style={disp} onClick={getUverenje}>Skini uverenje</button>
-          <button style={disp} onClick={sendUverenje}>Posalji uverenje na mejl</button>
+        <div className="profile">
+          <button style={disp} onClick={getUverenje}>
+            Skini uverenje
+          </button>
+          <button style={{ disp, marginTop: "10px" }} onClick={sendUverenje}>
+            Posalji uverenje na mejl
+          </button>
         </div>
       </div>
       <BackButton Path={path} />

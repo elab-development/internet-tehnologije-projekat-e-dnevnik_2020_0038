@@ -47,6 +47,8 @@ import AdminSubjectChange from "./views/AdminSubjectChange";
 import AdminSubjectDelete from "./views/AdminSubjectDelete";
 import WaitPage from "./views/WaitPage";
 import UploadForm from "./components/UploadFile.jsx";
+import AdminRegister from "./views/AdminRegister.jsx";
+import AllGrades from "./views/AdminAllGrades.jsx";
 
 const router = createBrowserRouter([
   {
@@ -93,8 +95,8 @@ const router = createBrowserRouter([
       },
       {
         path: "/student/upload",
-        element: <UploadForm />
-      }
+        element: <UploadForm />,
+      },
     ],
   },
   {
@@ -140,6 +142,10 @@ const router = createBrowserRouter([
       {
         path: "/admin/",
         element: <AdminHome />,
+      },
+      {
+        path: "/admin/register",
+        element: <AdminRegister />,
       },
       {
         path: "/admin/parentPage/",
@@ -192,6 +198,10 @@ const router = createBrowserRouter([
       {
         path: "/admin/otherPage/",
         element: <HandleOtherPage />,
+      },
+      {
+        path: "/admin/otherPage/allGrades",
+        element: <AllGrades />
       },
       {
         path: "/admin/otherPage/gradeType/insert",

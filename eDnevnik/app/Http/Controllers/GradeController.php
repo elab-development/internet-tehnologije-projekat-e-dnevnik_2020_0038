@@ -15,10 +15,31 @@ class GradeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request, $pageNumber)
     {
-        $grades = Grade::with([ 'subject', 'student', 'professor'])->get();;
-        return new GradeCollection($grades);
+        $perPage = $request->input('per_page', 5);
+        $ocene = Grade::paginate($perPage);
+        $totalPages = $ocene->lastPage();
+        $request->pageNumber;
+
+        return response()->json([
+            'ocene' => new GradeCollection($ocene),
+            'total_pages' => $totalPages,
+
+        ]);
+    }
+
+    public function getGradesPaginate($pageNumber, Request $request){
+         $perPage = $request->input('per_page', 5);
+        $skip = $perPage * $pageNumber;
+        $ocene = Grade::skip($skip)->take($perPage)->get();
+        $totalPages = ceil(Grade::count() / $perPage);
+
+        return response()->json([
+            'ocene' => new GradeCollection($ocene),
+            'total_pages' => $totalPages,
+            'pageNumber' => intval($pageNumber)
+        ]);
     }
 
     public function getGradesForStudent($student_id, $subject_id){

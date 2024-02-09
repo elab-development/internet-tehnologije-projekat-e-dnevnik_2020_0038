@@ -44,7 +44,7 @@ export default function ParentHome() {
   }
   return (
     <div className="page">
-      <div className="students">
+      <div className="students2" style={{maxHeight: "300px"}}>
         {students.map((student) => (
           <Link
             to={`/student/`}

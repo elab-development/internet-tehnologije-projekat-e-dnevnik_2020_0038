@@ -186,10 +186,13 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function (){
     Route::delete('/students/{student_id}', [StudentController::class,'destroy']); //napisana
 
     //radi - prikaz svih ocena
-    Route::resource('/grades',GradeController::class);//napisana
+    //Route::resource('/grades',GradeController::class);//napisana
+    
 
     //radi - prikaz svih razreda
     Route::get('/schoolGrades',[SchoolGradeController::class,'index']); //napisana
+
+    Route::get('/grades/{pageNumber}', [GradeController::class, 'getGradesPaginate']);
 });
 
 //ako necemu mogu svi da pristupe onda neka bude isauth
@@ -227,7 +230,7 @@ Route::group(['middleware' => ['auth:sanctum', 'student']], function (){
 
 Route::post('/loginRoditelja',[AuthControllerStudentParent::class,'login']);
 
-Route::post('/loginUcenika',[AuthControllerStudent::class,'login']);
+ Route::post('/loginUcenika',[AuthControllerStudent::class,'login']);
 
 Route::post('/loginProfesora',[AuthControllerProfessor::class,'login']);
 

@@ -135,7 +135,7 @@ export default function StudentGrade() {
               setFilterSet(true);
               setNewFilter(e.target.value);
             }}
-                      >
+          >
             {gradeTypes.map((grade, index) => (
               <option
                 key={grade.id}
@@ -184,21 +184,16 @@ export default function StudentGrade() {
           </button>
         </div>
         <div style={{ marginLeft: "10px" }}>
-          {/* <p style={{ marginLeft: "45px", marginBottom: "5px" }} id="tipOcene">
-            Izaberite tip za sve ocene:
-          </p>
-          <select
-            name="gradeType"
-            id="tipOcene"
-            style={{ marginBottom: "0px", marginLeft: "45px" }}
-          >
-            {gradeTypes.map((grade) => (
-              <option key={grade.id} value={grade.grade_type_name}>
-                {grade.grade_type_name}
-              </option>
-            ))}
-          </select> */}
-          <p style={{ marginLeft: "45px" }}>Spisak svih ocena:</p>
+          <div className="sort">
+            <p style={{ marginLeft: "45px" }}>Spisak svih ocena:</p>
+            <div className="sort">
+              <p style={{marginRight: "5px"}}>Sortiraj po datumu:</p>
+              <select name="sortiraj" id="sortiraj">
+                <option value="rastuce">Rastuce</option>
+                <option value="opadajuce">Opadajuce</option>
+              </select>
+            </div>
+          </div>
           <div className="grades" style={{ height: "420px" }}>
             {grades.map((grade) => (
               <GradeComponent

@@ -40,6 +40,21 @@ export default function AdminHome() {
           />
         </Link>
       </div>
+      <div className="nesto">
+        <Link to="register">
+          <button
+            style={{
+              width: "230px",
+              height: "60px",
+              backgroundColor: "#b0dbcf",
+              color: "black",
+              fontSize: "medium",
+            }}
+          >
+            Registruj admina
+          </button>
+        </Link>
+      </div>
     </div>
   );
 }

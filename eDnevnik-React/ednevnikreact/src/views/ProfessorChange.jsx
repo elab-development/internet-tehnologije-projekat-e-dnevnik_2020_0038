@@ -57,13 +57,14 @@ export default function ProfessorChange() {
   const sendTo = async ({ gradeType, ocenaProf }) => {
     console.log(gradeType);
     console.log(ocenaProf);
+    debugger;
 
     if (ocenaProf.trim() === "") {
       setErrorValue("Morate da unesete vrednost za ocenu");
       return;
     }
 
-    if (gradeType == 2 && isNaN(parseInt(ocenaProf))) {
+    if (selectedGrade.gradeType.id == 2 && isNaN(parseInt(ocenaProf))) {
       setErrorValue("Ocena mora da bude numerickog tipa");
       return;
     }
@@ -205,7 +206,7 @@ export default function ProfessorChange() {
           }
           className="insertgrade"
         >
-          <p>{errorValue}</p>
+          <p style={{margin: "5px"}}>{errorValue}</p>
           <form
             className="formaProf"
             style={

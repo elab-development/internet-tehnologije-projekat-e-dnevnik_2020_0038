@@ -19,7 +19,7 @@ export default function AdminSubjectChange() {
   const [selectedProf, setSelectedProf] = useState(null);
   const [subject, setSubject] = useState();
   const [grade, setGrade] = useState();
-  const [inputValue, setInputValue] = useState();
+  const [inputValue, setInputValue] = useState("");
   const [errorValue, setErrorValue] = useState("");
 
   useEffect(() => {
@@ -122,7 +122,7 @@ export default function AdminSubjectChange() {
         <div>
           <div
             className="adminInsert"
-            style={grade ? { visibility: "visible" } : { visibility: "hidden" }}
+            style={subject ? { visibility: "visible" } : { visibility: "hidden" }}
           >
             <p style={{marginLeft: "40px"}}>{errorValue}</p>
             <form
@@ -138,7 +138,7 @@ export default function AdminSubjectChange() {
             >
               <p>Za {grade ? grade.name_of_school_grade : ""}</p>
               <div className="logintext">
-                <label htmlFor="name_surname">Ime za novi predmeta:</label>
+                <label htmlFor="name_surname">Ime za novi predmet:</label>
                 <input
                   type="text"
                   id="name_surname"

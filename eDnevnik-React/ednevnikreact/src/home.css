@@ -116,6 +116,24 @@ button:hover {
     align-items: center;
     justify-content: center;
 }
+
+.sort{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.profile{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    width: 300px;
+    height: 150px;
+    border-radius: 1em;
+}
 .big{
     /*#add8e6*/
     background-color: #b0dbcf;
@@ -277,6 +295,14 @@ button:hover {
     height:450px;
 }
 
+.students2{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-y:auto; 
+}
+
 #profgrades{
     height:250px;
 }
@@ -297,4 +323,26 @@ button:hover {
 
 #buttonZaboravljenaLoz{
     background-color: #bbd8d0;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+}
+
+.pagination li {
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.pagination li.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.pagination li:hover {
+  background-color: #f2f2f2;
 }

@@ -381,6 +381,23 @@ export async function getAllStudents(token: string) {
   }
 }
 
+export async function getAllGrades(pageNumber:number, token: string) {
+  try {
+    const sendTo = "/api/grades/" + pageNumber;
+    axios.defaults.headers.common.Authorization = "Bearer " + token;
+
+    const response = await axios.get(sendTo);
+    debugger;
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
+
 export async function saveStudentForParent(idRod:number, name:string, email:string, password:string, gradeId:number, age: string,
   token: string) {
   try {
