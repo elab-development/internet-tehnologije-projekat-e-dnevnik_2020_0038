@@ -14,7 +14,7 @@ export default function StudentProfile(props) {
   const [student, setStudent] = useState();
   const [weather, setWeather] = useState("");
   const CITY_NAME = 'Belgrade,srb';
-  const API_KEY = "3d456dd15842f5e24d3fcb181ddb808f";
+  const API_KEY = process.env.REACT_WEATHER_API_KEY;
   const [joke, setJoke] = useState("");
 
   let path = "/";
