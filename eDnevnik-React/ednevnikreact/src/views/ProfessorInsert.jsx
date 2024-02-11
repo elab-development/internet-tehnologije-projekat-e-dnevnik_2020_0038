@@ -118,12 +118,12 @@ export default function ProfessorInsert() {
     setLoading(true);
     const currentDate = new Date(); // Dobijanje trenutnog datuma i vremena
     const year = currentDate.getFullYear(); // Dobijanje godine
-    const month = currentDate.getMonth() + 1; // Dobijanje meseca (dodajemo 1 jer meseci idu od 0 do 11)
+    const month = currentDate.getMonth() + 1; // Dobijanje meseca (dodajem 1 jer meseci idu od 0 do 11)
     const day = currentDate.getDate(); // Dobijanje dana
     const formattedDate = `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`; // Formatiranje datuma u formatu "YYYY-MM-DD"
     try{
       debugger;
-      console.log(selectedSubject.professor_id);
+      console.log(selectedSubject.professor.id);
       const res = await saveGradeForStudent(selectedSubject.id, selectedStudent.id, selectedSubject.professor.id, token, 
         ocenaProf, gradeType, formattedDate);
       const gradeStud = await getGradesForStudentForSubject(
@@ -134,7 +134,7 @@ export default function ProfessorInsert() {
       setGrades(gradeStud);
       setLoading(false);
     }catch (error) {
-        setError("Dozvoljeno je jedan unos po danu");
+        setErrorValue(error);
         setLoading(false);
     }
   };

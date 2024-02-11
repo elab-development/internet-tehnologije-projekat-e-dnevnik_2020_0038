@@ -12,10 +12,31 @@ const UploadForm = () => {
   const [error, setError] = useState(null);
   const [data, setData] = useState([]);
   const [chartData, setChartData] = useState([]);
+  const [quote, setQuote] = useState("");
+
 
   const handleChange = (e) => {
     setFile(e.target.files[0]);
   };
+
+  const fetchQuote = async () => {
+    try {
+      debugger;
+      const response = await axios.get(
+        "https://api.api-ninjas.com/v1/quotes?category=education",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Api-Key": "emBkfLL9D3vWcGu13rtpEw==ebGifglRsPsfGsvV",
+          },
+        }
+      );
+      setQuote(response.data[0].quote);
+    } catch (error) {
+      console.error("Error fetching quote:", error);
+    }
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,6 +71,7 @@ const UploadForm = () => {
       const response = await getGradesFoStudentForType(user.id, 2, token);
       setData(response.spisak_ocena);
       gradeCount(response.spisak_ocena);
+      fetchQuote();
       setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -113,7 +135,10 @@ const UploadForm = () => {
           />
         </div>
       </div>
-      <BackButton Path={"/"} />
+      <div className="school">
+        <BackButton Path={"/"} />
+        <p style={{ marginLeft: "10px" }}>{quote}</p>
+      </div>
     </div>
   );
 };

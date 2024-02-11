@@ -206,7 +206,7 @@ Route::get('/proba/{subejct_id}', [StudentController::class, 'getAllGradesForSub
 Route::group(['middleware' => ['auth:sanctum', 'student']], function (){
 
     //radi - prikaz odredjenog ucenika - kao njegov profil svi
-    Route::get('/students/{student_id}',[StudentController::class,'show']);
+    Route::get('/studentProfile/{student_id}',[StudentController::class,'show']);
 
     //radi - vraca za odredjenog ucenika izabrani tip svih ocena - svi
     Route::get('/students/{student_id}/grades/{grade_type_id}',[GradeController::class,'getGradesTypesForStudent']);

@@ -89,6 +89,21 @@ export default function StudentGrade() {
     setFilter(true);
   }
 
+  function handleDateSort(e) {
+    debugger;
+    const selectedOption = e.target.value;
+    let sortedGrades = [...grades];
+
+    if (selectedOption === "rastuce") {
+      sortedGrades.sort((a, b) => new Date(a.date) - new Date(b.date));
+    } else if (selectedOption === "opadajuce") {
+      sortedGrades.sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+
+    setGrades(sortedGrades); 
+  }
+
+
   if (loading) {
     return <p>Učitavanje...</p>;
   }
@@ -105,7 +120,7 @@ export default function StudentGrade() {
   debugger;
   return (
     <div>
-      <div className="page">
+      <div className="page" style={{ marginBottom: "50px" }}>
         <div>
           <p>Spisak predmeta:</p>
           <div className="subjects">
@@ -187,8 +202,8 @@ export default function StudentGrade() {
           <div className="sort">
             <p style={{ marginLeft: "45px" }}>Spisak svih ocena:</p>
             <div className="sort">
-              <p style={{marginRight: "5px"}}>Sortiraj po datumu:</p>
-              <select name="sortiraj" id="sortiraj">
+              <p style={{ marginRight: "5px" }}>Sortiraj po datumu:</p>
+              <select name="sortiraj" id="sortiraj" onChange={handleDateSort}>
                 <option value="rastuce">Rastuce</option>
                 <option value="opadajuce">Opadajuce</option>
               </select>
@@ -206,7 +221,7 @@ export default function StudentGrade() {
           </div>
         </div>
       </div>
-      <BackButton Path={path} />
+      <BackButton Path={path} style={{ marginTop: "20px" }} />
     </div>
   );
 }

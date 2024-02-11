@@ -78,8 +78,9 @@ export async function login(path: string, email: string, password: string) {
 
 export async function getStudentProfile(id: number, token: string) {
   try {
+    debugger;
     console.log("drugi");
-    const sendTo = "/api/students/" + id;
+    const sendTo = "/api/studentProfile/" + id;
     axios.defaults.headers.common.Authorization = "Bearer " + token;
 
     const response = await axios.get(sendTo);
@@ -304,9 +305,9 @@ export async function saveGradeForStudent(
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data.message);
+      throw error.response?.data.message;
     }
-    throw new Error("Unexpected error");
+    throw error;
   }
 }
 

@@ -4,12 +4,18 @@ import { useStateContext } from "../contexts/ContextProvider.jsx";
 import { useEffect, useState } from "react";
 import { getStudentProfile, getUverenjeStudenta, sendUverenjeStudentaByEmail } from "../service/services.tsx";
 import { Navigate } from "react-router-dom";
+import axios from "axios";
+import axiosJsonp from "axios-jsonp";
 
 export default function StudentProfile(props) {
   const { user, userType, token, storedHelper, setUser} = useStateContext();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [student, setStudent] = useState();
+  const [weather, setWeather] = useState("");
+  const CITY_NAME = 'Belgrade,srb';
+  const API_KEY = "3d456dd15842f5e24d3fcb181ddb808f";
+  const [joke, setJoke] = useState("");
 
   let path = "/";
   let disp;
@@ -52,8 +58,15 @@ export default function StudentProfile(props) {
   useEffect(() => {
     async function fetchData() {
       try {
+        debugger;
         subjectsData = await getStudentProfile(id, token);
         setStudent(subjectsData);
+        const weatherResponse = await axios({
+          url: `http://api.openweathermap.org/data/2.5/weather?q=${CITY_NAME}&APPID=${API_KEY}`,
+          adapter: axiosJsonp, // Ovo omogućava korišćenje JSONP-a
+        });
+        setWeather(weatherResponse.data.weather[0].description); // Postavite vremenske uslove u stanje
+        fetchJoke();
         setLoading(false);
       } catch (error) {
         setError(error.message);
@@ -63,6 +76,7 @@ export default function StudentProfile(props) {
 
     fetchData();
   }, [id, token]);
+
 
   const getUverenje = async () =>{
     try {
@@ -74,6 +88,17 @@ export default function StudentProfile(props) {
       setLoading(false);
     }
   }
+
+  const fetchJoke = async () => {
+    try {
+      const response = await axios.get(
+        "https://api.chucknorris.io/jokes/random"
+      );
+      setJoke(response.data.value);
+    } catch (error) {
+      console.error("Error fetching joke:", error);
+    }
+  };
 
   const sendUverenje = async () =>{
     try {
@@ -109,13 +134,19 @@ export default function StudentProfile(props) {
           <p>Ime i prezime roditelj: {nameparent}</p>
           <p>Email roditelja: {emailparent}</p>
         </div>
-        <div className="profile">
-          <button style={disp} onClick={getUverenje}>
-            Skini uverenje
-          </button>
-          <button style={{ disp, marginTop: "10px" }} onClick={sendUverenje}>
-            Posalji uverenje na mejl
-          </button>
+        <div className="prognoza">
+          <div className="profile" style={{marginTop: "10px"}}>
+            <button style={disp} onClick={getUverenje}>
+              Skini uverenje
+            </button>
+            <button style={{ disp, marginTop: "10px" }} onClick={sendUverenje}>
+              Posalji uverenje na mejl
+            </button>
+          </div>
+          <p>Danasnja prognoza: {weather}</p>
+          <p style={{margin: "2px"}}>Sala dana:</p>
+          <p style={{marginLeft: "5px"}}>{joke}</p>
+          <button onClick={fetchJoke}>Daj mi drugi vic</button>
         </div>
       </div>
       <BackButton Path={path} />

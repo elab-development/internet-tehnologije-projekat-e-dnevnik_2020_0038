@@ -61,20 +61,19 @@ class GradeController extends Controller
         $grades = Grade::where('student_id', $request->student_id)
         ->where('subject_id',$request->subject_id)
         ->where('grade_type_id',2)
-        ->whereMonth('date', '>=', '09')
         ->get();
 
-        if($grades !== null){
+        if($grades !== null && count($grades) !== 0){
             $sum = 0;
-            $numberOfGrades = 0.0;
+            $numberOfGrades = 0;
             foreach($grades as $gr){
                 $sum = $sum + $gr->grade; 
                 $numberOfGrades++;
             }
             $sum = $sum/$numberOfGrades;
-            return response()->json('Zakljucna ocena je ' . $sum, 200);
+            return $sum;
         }else{
-            return response()->json('Ne postoje ocene', 404);
+            return null;
         }
     }
 
@@ -87,16 +86,20 @@ class GradeController extends Controller
             ->whereDate('date', '>', $grade->date)
             ->get();
 
-            $sum = $grade->grade;
-            $numberOfGrades = 1.0;
-            foreach($grades as $gr){
-                $sum = $sum + $gr->grade; 
-                $numberOfGrades++;
+            if($grades !== null){
+                $sum = 0;
+                $numberOfGrades = 1;
+                foreach($grades as $gr){
+                    $sum = $sum + $gr->grade; 
+                    $numberOfGrades++;
+                }
+                $sum = $sum/$numberOfGrades;
+                return $sum;
+            }else{
+                return 0;
             }
-            $sum = $sum/$numberOfGrades;
-            return response()->json('Zakljucna ocena je ' . $sum, 200);
         }else{
-            return response()->json('Ne postoji ocena na polugodistu', 404);
+            return null;
         }
     }
 
@@ -118,6 +121,10 @@ class GradeController extends Controller
      */
     public function store(Request $request, $proffesor_id)
     {
+        $zak = Grade::where('student_id', $request->student_id)->where('grade_type_id', 4)->first();
+        if($zak !== null){
+            return response()->json(['message' => 'Ne mozete da unesete ocenu nakon zakljucne ocene'], 404);
+        }
         $grade = new Grade;
         //$student->studentParent = StudentParent::where('id',$student_parent_id)->get();
         $grade->professor_id = $proffesor_id;
@@ -135,6 +142,26 @@ class GradeController extends Controller
         if($validator->fails()){
             return response()->json('Ocena, predmet, student mora da bude izabrano', 404);
         }else{
+            if($data["grade_type_id"] !== "1" && $data["grade_type_id"] !== "2"){
+
+                if($data["grade_type_id"] === "4"){
+                    $res = $this->getFinalGrade($request, $proffesor_id);
+
+                    if($res === null){
+                        return response()->json(['message' => 'Ne postoji ocena na polugodistu'], 400);
+                    }else if($res === 0){
+                        return response()->json(['message' => 'Ne postoji ocena u drugom polugodistu'], 400);
+                    }
+
+                }else{
+                    $res = $this->getSemestarGrade($request, $proffesor_id);
+
+                    if($res === null){
+                        return response()->json(['message' => 'Ne postoji ni jedna ocena'], 400);
+                    }
+                }
+            }
+
             $grade->grade = $data["grade"];
             $grade->student_id = $data["student_id"];
             $grade->subject_id = $data["subject_id"];
@@ -142,11 +169,11 @@ class GradeController extends Controller
             $grade->grade_type_id = $data["grade_type_id"];
 
             if($grade->grade_type_id == 1 && !is_string($grade->grade) ){
-                return response()->json('Za izabrani tip ocene morate da unesete tekstualnu vrednost. Ocena nije uneta', 404);
+                return response()->json(['message' =>'Za izabrani tip ocene morate da unesete tekstualnu vrednost. Ocena nije uneta'], 403);
             }
 
             $res = $grade->save();
-            return $res ? response()->json('Ocena je uspesno uneta', 200) : response()->json('Ocena nije uneta', 404);
+            return $res ? response()->json(['message' => 'Ocena je uspesno uneta'], 200) : response()->json(['message' => 'Ocena nije uneta'], 404);
         }
     }
 
