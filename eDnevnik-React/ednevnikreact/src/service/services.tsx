@@ -13,6 +13,27 @@ export async function getSubjects(id: number, token: string, csrfToken: string) 
   return res.data.predmeti as Subject[];
 }
 
+export async function registerAdmin( email: string, password: string, token: string) {
+  try {
+    console.log("drugi");
+    const sendTo = "/api/registrujAdmina";
+
+    debugger;
+    const response = await axios.post(sendTo, {
+      email: email,
+      password: password,
+    });
+    
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message);
+    }
+    throw new Error("Unexpected error");
+  }
+}
+
 
 export async function getCsrf() {
   debugger;

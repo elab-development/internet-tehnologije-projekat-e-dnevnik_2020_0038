@@ -67,10 +67,10 @@ Route::group(['middleware' => ['auth:sanctum', 'professor']], function (){
     Route::post('/professors/{professor_id}/grades', [GradeController::class,'store']);
 
     //radi - vraca prosek svih ocena za drugo polugodiste
-    Route::post('/professors/{professor_id}/finalgrades', [GradeController::class,'getFinalGrade']);
+    //Route::post('/professors/{professor_id}/finalgrades', [GradeController::class,'getFinalGrade']);
 
     //radi - za odredjenog studenta vraca ocenu na polugodistu koja je kompjuterski izracunata
-    Route::post('/professors/{professor_id}/firstSemestarGrades', [GradeController::class,'getSemestarGrade']);
+    //Route::post('/professors/{professor_id}/firstSemestarGrades', [GradeController::class,'getSemestarGrade']);
 
     //radi - vraca sve predmete koje predaje profesor
     Route::get('/professors/{professor_id}/subjects', [SubjectController::class,'getAllSubjects']);
@@ -174,7 +174,7 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function (){
     Route::delete('/parents/{parent_id}', [StudentParentController::class,'destroy']);
 
     //radi - prikaz svih ucenika
-    Route::get('/students',[StudentController::class,'index']);
+    Route::resource('/students',StudentController::class);
 
     //radi - ubacivanje novog ucenika za odredjenog roditelja
     Route::post('/parents/{parent_id}/students', [StudentController::class,'store']);
@@ -184,10 +184,6 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function (){
 
     //radi - brisanje odredjenog studenta
     Route::delete('/students/{student_id}', [StudentController::class,'destroy']); //napisana
-
-    //radi - prikaz svih ocena
-    //Route::resource('/grades',GradeController::class);//napisana
-    
 
     //radi - prikaz svih razreda
     Route::get('/schoolGrades',[SchoolGradeController::class,'index']); //napisana
@@ -203,7 +199,9 @@ Route::get('/typeOfGrades',[GradeTypeController::class,'index'])->middleware('is
 Route::get('/students/{student_id}/subjects/{subject_id}/grades',[GradeController::class,'getGradesForStudent'])->middleware('isauth');
 
 //radi - za odredjeni razred vraca sve predmete
-Route::get('/schoolGrades/{school_grade_id}/subjects',[SchoolGradeController::class,'show'])->middleware('isauth');;
+Route::get('/schoolGrades/{school_grade_id}/subjects',[SchoolGradeController::class,'show'])->middleware('isauth');
+
+Route::get('/proba/{subejct_id}', [StudentController::class, 'getAllGradesForSubject']);
 
 Route::group(['middleware' => ['auth:sanctum', 'student']], function (){
 

@@ -31,20 +31,6 @@ class StudentController extends Controller
         return new StudentCollection($students);
     }
 
-    public function getPieChart($student_id){
-        $grades = Grade::where('students_id', $student_id)->get();
-        return new GradeCollection($grades);
-    }
-    
-    // public function getAllStudentsForSubject($subject_id){
-    //     //mozda join fja da probas
-    //     $subject = Subject::where('id',$subject_id)->first();
-    //     $schoolGrade = SchoolGrade::where('id', $subject->school_grade_id)->first();
-    //     $students = Student::where('school_grade_id', $schoolGrade->id)->get();
-    //     $grades = Grade::where('student_id', $students->id)->get() 
-    //     return new GradeCollection($grades);
-    // }
-
     public function getAllGradesForSubject($subject_id) {
         $grades = Grade::join('students', 'grades.student_id', '=', 'students.id')
                     ->join('subjects', 'grades.subject_id', '=', 'subjects.id')

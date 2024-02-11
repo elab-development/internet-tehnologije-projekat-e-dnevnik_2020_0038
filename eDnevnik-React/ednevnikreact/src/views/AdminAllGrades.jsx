@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import ReactPaginate from "react-paginate";
 import { getAllGrades } from "../service/services.tsx";
 import { useStateContext } from "../contexts/ContextProvider";
 import GradeComponent from "./GradeComponent.jsx";
@@ -10,20 +8,21 @@ export default function AllGrades() {
   const { user, userType, token, setUser, setToken, setUserType } =
     useStateContext();
   const [ocene, setOcene] = useState([]);
-  const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState();
+  const [pageCount, setPageCount] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const itemsPerPage = 10; // Broj stavki po stranici
 
   useEffect(() => {
     fetchOcene(currentPage);
   }, [currentPage]);
 
-
   const fetchOcene = async (pageNumber) => {
     try {
       debugger;
-      pageNumber = pageNumber-1;
+      pageNumber = pageNumber - 1;
       setLoading(true);
       const response = await getAllGrades(pageNumber, token);
       setOcene(response.ocene);
@@ -36,12 +35,58 @@ export default function AllGrades() {
     }
   };
 
-  const handlePageClick = (selectedPage) => {
-    debugger;
-    const curr = selectedPage.selected;
-    setCurrentPage(curr);
-    //fetchOcene(selectedPage);
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
+
+  const renderPagination = () => {
+    const pagination = [];
+    let start = Math.max(1, Math.min(currentPage - 1, pageCount - 2)); // Početak paginacije
+    let end = Math.min(start + 2, pageCount); // Kraj paginacije
+
+    // Dodajeme strelicu za nazad ako nije prva stranica
+    if (currentPage > 1) {
+      pagination.push(
+        <li
+          key="prev"
+          onClick={() => handlePageClick(currentPage - 1)}
+          className="pagination li"
+        >
+          <button>{"<"}</button>
+        </li>
+      );
+    }
+
+    for (let i = start; i <= end; i++) {
+      pagination.push(
+        <li
+          key={i}
+          className={currentPage === i ? "active pagination li" : "pagination li"}
+          onClick={() => handlePageClick(i)}
+        >
+          <button>{i}</button>
+        </li>
+      );
+    }
+
+    // Dodajeme strelicu za napred ako nije posljednja stranica
+    if (currentPage < pageCount) {
+      pagination.push(
+        <li
+          key="next"
+          onClick={() => handlePageClick(currentPage + 1)}
+          className="pagination li"
+        >
+          <button>{">"}</button>
+        </li>
+      );
+    }
+
+    return pagination;
+  };
+
+
+
 
   if (loading) {
     return <p>Učitavanje...</p>;
@@ -58,6 +103,7 @@ export default function AllGrades() {
         <div className="grades" style={{ height: "415px" }}>
           {ocene.map((grade) => (
             <GradeComponent
+              key={grade.id}
               id={grade.id}
               GradeType={grade.gradeType.id}
               SubjectName={grade.subject.subject_name}
@@ -66,20 +112,7 @@ export default function AllGrades() {
             />
           ))}
         </div>
-        <ReactPaginate
-          previousLabel={"<"}
-          nextLabel={">"}
-          breakLabel={"..."}
-          breakClassName={"break-me"}
-          pageCount={pageCount}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={5}
-          onPageChange={handlePageClick}
-          containerClassName={"pagination"}
-          activeClassName={"active"}
-          previousClassName={currentPage === 1 ? "disabled" : ""}
-          nextClassName={currentPage === pageCount ? "disabled" : ""}
-        />
+        <ul className="pagination">{renderPagination()}</ul>
       </div>
       <BackButton Path={"/admin/otherPage"} />
     </div>

@@ -3,40 +3,17 @@ import { useStateContext } from "../contexts/ContextProvider";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { login } from "../service/services.tsx";
+import { login, registerAdmin } from "../service/services.tsx";
 import axios from "axios";
 import BackButton from "../components/BackButton.jsx";
 
 export default function AdminRegister() {
-  const { user, userType, setUser, setToken, setUserType } = useStateContext();
+  const { user, userType, setUser, setToken, setUserType, token } = useStateContext();
   const [error, setError] = useState();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   let type;
-
-  switch (userType) {
-    case "student":
-      type = "Ucenik";
-      break;
-    case "professor":
-      type = "Profesor";
-      break;
-    case "parent":
-      type = "Roditelj";
-      break;
-    case "admin":
-      type = "Admin";
-      break;
-    default:
-      navigate("/");
-      break;
-  }
-
-  const forgotten = () => {
-    setUserType(userType);
-    return navigate("/resetLozinka");
-  };
 
   const sendTo = async (event) => {
     event.preventDefault();
@@ -45,7 +22,6 @@ export default function AdminRegister() {
     const password = document.getElementById("password").value;
     let flag = true;
 
-    setUserType(userType);
     if (
       typeof email !== "string" ||
       email === "" ||
@@ -64,39 +40,21 @@ export default function AdminRegister() {
       return;
     }
 
-    let path;
-    switch (userType) {
-      case "student":
-        path = "Ucenika";
-        break;
-      case "professor":
-        path = "Profesora";
-        break;
-      case "parent":
-        path = "Roditelja";
-        break;
-      case "admin":
-        path = "Admina";
-        break;
-      default:
-        navigate("/");
-        break;
-    }
     try {
       setLoading(true);
+      debugger;
+      const res = await registerAdmin(email, password, token);
 
-      const res = await login(path, email, password);
-
-      if (!res.data) {
+      if (!res) {
         setError("Ne postoji korisnik sa unetim podacima.");
         setLoading(false);
         return;
       }
 
-      debugger;
-      setToken(res.token);
-      setUser(res.data);
 
+      setError(res.data);
+      document.getElementById("email").value = "";
+      document.getElementById("password").value = "";
       setLoading(false);
       debugger;
     } catch (error) {
@@ -106,28 +64,13 @@ export default function AdminRegister() {
     }
   };
 
-  useEffect(() => {
-    debugger;
-    // if (userType && user) {
-    //   switch (userType) {
-    //     case "student":
-    //       navigate("/student/");
-    //       break;
-    //     case "professor":
-    //       navigate("/professor/");
-    //       break;
-    //     case "parent":
-    //       navigate("/parent/");
-    //       break;
-    //     case "admin":
-    //       navigate("/admin/");
-    //       break;
-    //     default:
-    //       navigate("/");
-    //       break;
-    //   }
-    // }
-  }, [userType, user, navigate]);
+  if (loading) {
+    return <p>Učitavanje...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div>

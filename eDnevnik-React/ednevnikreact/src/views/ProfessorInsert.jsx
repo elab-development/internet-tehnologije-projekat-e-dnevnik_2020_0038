@@ -50,13 +50,21 @@ export default function ProfessorInsert() {
   };
 
   const handleSchoolGradeClick = async (e) => {
-    setOcenaProf(e.target.value);
-     setSelectedStudent(null);
-     setSelectedSubject(null);
-    setLoading(true);
-    const subj = await getSubjects(e.target.value, token);
-    setSubjects(subj);
-    setLoading(false);
+    if(e.target.value === ""){
+      setOcenaProf(e.target.value);
+      setSelectedStudent(null);
+      setSelectedSubject(null);
+      setSubjects(null);
+    }else{
+      setOcenaProf(e.target.value);
+      setSelectedStudent(null);
+      setSelectedSubject(null);
+      setLoading(true);
+      const subj = await getSubjects(e.target.value, token);
+      setSubjects(subj);
+      setLoading(false);
+    }
+    
   }
 
   useEffect(() => {
@@ -76,7 +84,7 @@ export default function ProfessorInsert() {
         setgradeTypes(grt);
         setLoading(false);
       } catch (error) {
-        setError(error.message);
+        setErrorValue(error.message);
         setLoading(false);
       }
     }
@@ -102,10 +110,11 @@ export default function ProfessorInsert() {
       return;
     }
 
-    if (gradeType == 2 && isNaN(parseInt(ocenaProf))) {
-      setErrorValue("Ocena mora da bude numerickog tipa");
+    if ((gradeType == 2 && isNaN(parseInt(ocenaProf))) || (gradeType == 2 && ocenaProf < 1 || ocenaProf > 5)) {
+      setErrorValue("Ocena mora da bude numerickog tipa i izmedju 1-5");
       return;
     }
+
     setLoading(true);
     const currentDate = new Date(); // Dobijanje trenutnog datuma i vremena
     const year = currentDate.getFullYear(); // Dobijanje godine
@@ -154,6 +163,7 @@ export default function ProfessorInsert() {
               onChange={(e) => handleSchoolGradeClick(e)}
               value={ocenaProf}
             >
+              <option value="">Odaberite razred</option>
               {razredi &&
                 razredi.map((schoolgrade) => (
                   <option key={schoolgrade.id} value={schoolgrade.id}>
@@ -192,7 +202,7 @@ export default function ProfessorInsert() {
                   Name={student.name_surname}
                   Grade={student.school_grade.name_of_school_grade}
                   onClick={() => handleStudentClick(student)}
-                  style={{margin: "5px"}}
+                  style={{ margin: "5px" }}
                 />
               ))}
           </div>

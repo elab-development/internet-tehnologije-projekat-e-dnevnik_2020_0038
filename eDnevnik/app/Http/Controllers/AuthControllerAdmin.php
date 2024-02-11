@@ -16,7 +16,7 @@ class AuthControllerAdmin extends Controller
         //if($request->isMethod('get')) kda bude gotov front
         $data = json_decode($request->getContent(), true);
         $rules = [
-            'email' => 'required|email|unique:student_parents,email',
+            'email' => 'required|email',
             'password' => 'required|min:6',
         ];
 
@@ -24,21 +24,16 @@ class AuthControllerAdmin extends Controller
         if($validator->fails()){
             return response()->json($validator->errors(),400);
         }
-/*
-        $parent = new StudentParent;
-        $parent->name_surname = $data[0]["name_surname"];
-        $parent->email = $data[0]["email"];
-        $parent->password = Hash::make($data[0]["password"]);
-*/
+
         $parent = Admin::create([
             'email' => $data["email"],
             'password' => Hash::make($data["password"]),
         ]);
 
-        $token = $parent->createToken('auth_token')->plainTextToken;
+        //$token = $parent->createToken('auth_token')->plainTextToken;
         //$res = $parent->save();
 
-        return response()->json(['data' => $parent, 'access_token' => $token]);
+        return response()->json(['data' => 'Uspesno ste registrovali admina']);
         //return $res ? response()->json("Uspesno ste se registrovali",200) : response()->json("Niste ste se registrovali",400);
     }
 

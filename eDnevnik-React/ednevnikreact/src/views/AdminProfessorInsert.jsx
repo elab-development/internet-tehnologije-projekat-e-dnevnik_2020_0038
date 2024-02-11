@@ -84,7 +84,7 @@ export default function AdminProfessorInsert() {
 
   return (
     <div>
-      <div className="usable" style={{ marginBottom: "40px" }}>
+      <div className="usable" style={{ marginBottom: "35px" }}>
         <div>
           <p style={{ marginLeft: "45px" }}>Spisak svih profesora:</p>
           <div className="grades" style={{ height: "420px" }}>
